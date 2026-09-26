@@ -39,7 +39,7 @@ node server.js
 Open **http://localhost:3000** 
 
 
-###Limits and future improvements
+### Limits and future improvements
 
 **Email Discovery Integration**  
 Adding logic to buyer websites for published contact emails (e.g., parsing “Contact” or “About” pages).
