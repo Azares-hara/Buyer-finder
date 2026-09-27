@@ -28,7 +28,7 @@ A website that helps home decor makers and small sellers in the **United States*
 
 ```bash
 git clone https://github.com/Azares-hara/Buyer-finder.git
-cd decorfind
+cd Buyer-finder
 npm install
 ```
 
