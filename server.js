@@ -1,12 +1,17 @@
 require("dotenv").config();
 const express = require("express");
+const path = require("path");
 const { Resend } = require("resend");
 
 const app = express();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-//static files
-app.use(express.static("public"));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+//all static files
+app.use(express.static(__dirname));
+
 
 //cities by state
 const citiesByState = {
