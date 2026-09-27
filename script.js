@@ -32,9 +32,10 @@ async function search() {
   buyers = [];
 
   try {
-    const res = await fetch(
-      `/api/find-buyers?item=${encodeURIComponent(item)}&city=${encodeURIComponent(state)}`
+    const res = await fetch("https://buyer-finder-pyoa.onrender.com/api/find-buyers?item=" +
+  encodeURIComponent(item) + "&city=" + encodeURIComponent(state)
     );
+
     if (!res.ok) throw new Error();
     buyers = await res.json();
 
@@ -90,11 +91,12 @@ async function sendEmail(i) {
   msg.className = "msg";
   msg.textContent = "Sending...";
   try {
-    const res = await fetch("/api/send-email", {
+    const res = await fetch("https://buyer-finder-pyoa.onrender.com/api/send-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ to, buyerName: buyers[i].name, sellerName: "A Home Decor Seller", item }),
     });
+
     const result = await res.json();
     if (result.success) {
       msg.className = "msg ok";
