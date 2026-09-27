@@ -1,8 +1,11 @@
 # Buyer-finder
 Help find buyers for sellers and send emails for potential contracts.
-Webpage - **https://azares-hara.github.io/Buyer-finder/**
+
+- **Frontend (Webpage):** [https://azares-hara.github.io/Buyer-finder/](https://azares-hara.github.io/Buyer-finder/)
+- **Backend (API Service):** [https://buyer-finder-pyoa.onrender.com](https://buyer-finder-pyoa.onrender.com)
 
 # DecorFind — Home Decor Buyer Finder
+
 
 A website that helps home decor makers and small sellers in the **United States** find potential wholesale buyers — boutiques, gift shops, and interior design studios — and pitch them via email in one click.
 
