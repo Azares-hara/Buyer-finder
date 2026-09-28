@@ -122,7 +122,7 @@ Kind Regards,
 ${sellerName}
 Sales Executive
 ${process.env.COMPANY_NAME}
-📧 ${process.env.SENDER_EMAIL}
+📧 exportindia2026us@gmail.com
 📱 ${process.env.SENDER_PHONE}
 
 Thank you for your valuable time. We look forward to building a successful and long-term partnership with ${company}.
