@@ -77,7 +77,7 @@ app.get("/api/find-buyers", async (req, res) => {
 
 //Pitching email via Resend
 app.post("/api/send-email", express.json(), async (req, res) => {
-  const { to, buyerName, sellerName, item, country, company } = req.body;
+ const { to, buyerName, sellerName, item, country, company, website, category } = req.body;
 
   if (!to || !to.includes("@")) {
     return res.status(400).json({ error: "Valid buyer email required" });
@@ -129,11 +129,11 @@ Thank you for your valuable time. We look forward to building a successful and l
       `,
       attachments: [
         {
-          filename: "poster.pdf",
+          filename: "Singing bowl poster.pdf",
           path: "https://drive.google.com/uc?export=download&id=15eZxHUjFMz0H-NrpRZWQkgScGRxqUGrR"
         },
         {
-          filename: "catalogue.pdf",
+          filename: "Singing bowl ppt.pdf",
           path: "https://drive.google.com/uc?export=download&id=1pGJ-LaV5smg1ePTLSHDRbsWuX0KqXmyY"
         }
       ]
