@@ -85,7 +85,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
 
   try {
     await resend.emails.send({
-      from: process.env.SENDER_EMAIL,
+      from: "onboarding@resend.dev", 
       to,
       subject: `Home decor wholesale inquiry — ${item}`,
       text: `
