@@ -1,6 +1,8 @@
 # Buyer-finder
 Help find buyers for sellers and send emails for potential contracts.
 
+Live site: [https://buyer-finder-pyoa.onrender.com](https://buyer-finder-pyoa.onrender.com)
+
 # DecorFind — Home Decor Buyer Finder
 
 A website that helps home decor makers and small sellers in the **United States** find potential wholesale buyers — boutiques, gift shops, and interior design studios — and pitch them via email in one click.
@@ -26,7 +28,7 @@ A website that helps home decor makers and small sellers in the **United States*
 
 ```bash
 git clone https://github.com/Azares-hara/Buyer-finder.git
-cd decorfind
+cd Buyer-finder
 npm install
 ```
 
@@ -53,5 +55,6 @@ Connect to LinkedIn APIs or wholesale directories to find verified buyer contact
 
 
 ## License
+This project is licensed under the GNU General Public License v3.0 (GPLv3).
+See the [LICENSE](./LICENSE) file for details.
 
-MIT

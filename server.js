@@ -68,7 +68,7 @@ app.get("/api/find-buyers", async (req, res) => {
     }
     const unique = [...new Map(allBuyers.map(b => [b.name, b])).values()];
     res.json(unique);
-    res.json(allBuyers);
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
@@ -94,41 +94,29 @@ Direct Manufacturer from Nepal • Wholesale • OEM • Private Label
 
 Dear ${buyerName} Team,
 
-While researching businesses in ${country}, we came across ${company} and were impressed by your commitment to quality wellness products.
+We were looking into wellness businesses in ${country} and recently came across ${company}.
+Having browsed your website (${website}), we noticed your keen interest and strong focus on ${category} and we were impressed with your commitment to quality and customer experience. 
+We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques and your brand’s aesthetic goes beautifully with our handcrafted Himalayan singing bowls
+made by skilled artisans in Nepal using traditional methods
 
-We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques.
+We offer a range of products.
+Himalayan Singing Bowls Made By Hand
+Singing Bowls, Full Moon
+Vintage Finished Singing Bowls
+Why Our Bowls are Right for Your Store
+Sound Healing Bowls & Meditation
+Tingsha Cymbals & Meditation Tool
+Private Label & Custom Logo Manufacturing
 
-Our Product Range
-Handmade Himalayan Singing Bowls
-Full Moon Singing Bowls
-Antique Finish Singing Bowls
-Chakra Singing Bowl Sets
-Meditation & Sound Healing Bowls
-Tingsha Cymbals & Meditation Accessories
-Custom Logo & Private Label Manufacturing
+Why Our Bowls Fit Your Store
+✔ Handcrafted with authenticity
+✔ Great for meditation, yoga, sound healing & wellness retail
+✔ OEM & Private Label options for your trademark or brand identity
+✔ Worldwide shipping with dedicated export support
 
-Choose the Collection That Fits Your Business
-✨ Premium Collection
-Individually handcrafted with superior finish and exceptional sound quality.
+We believe our products would make a great addition to ${company}’s current collection and would resonate strongly with your customers in ${country}.
 
-NO MINIMUM ORDER QUANTITY
-Order from a single bowl to large wholesale quantities.
-
-📦 Standard Collection
-Perfect for wholesalers and distributors seeking bulk procurement.
-
-Minimum Order Quantity
-200 Pieces
-Competitive pricing and consistent quality for high-volume orders.
-
-Why Partner With Us?
-✔️ Direct Manufacturer from Nepal
-✔️ Authentic Handmade Craftsmanship
-✔️ OEM & Private Label Services
-✔️ Worldwide Shipping
-✔️ Dedicated Export Support
-
-Our latest catalogue is attached. Reply to this email for wholesale pricing, samples, shipping quotations, and customization options.
+Please find our attachments enclosed. We would be happy to share wholesale pricing, samples, and customization options.
 
 Kind Regards,
 ${sellerName}
@@ -142,11 +130,11 @@ Thank you for your valuable time. We look forward to building a successful and l
       attachments: [
         {
           filename: "poster.pdf",
-          path: path.join(__dirname, "Singing bowl poster.pdf")
+          path: "https://drive.google.com/uc?export=download&id=15eZxHUjFMz0H-NrpRZWQkgScGRxqUGrR"
         },
         {
           filename: "catalogue.pdf",
-          path: path.join(__dirname, "Singing bowl ppt.pdf")
+          path: "https://drive.google.com/uc?export=download&id=1pGJ-LaV5smg1ePTLSHDRbsWuX0KqXmyY"
         }
       ]
     });

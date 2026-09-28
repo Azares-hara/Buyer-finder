@@ -1,4 +1,4 @@
-//Mobile menu 
+//Mobile menu
 document.getElementById("menu-open-button").onclick = () =>
   document.body.classList.add("show-mobile-menu");
 document.getElementById("menu-close-button").onclick = () =>
@@ -7,7 +7,7 @@ document.querySelectorAll(".nav-menu .nav-link").forEach((link) => {
   link.onclick = () => document.body.classList.remove("show-mobile-menu");
 });
 
-//Buyer search and email 
+//Buyer search and email
 let buyers = [];
 
 function stars(rating) {
@@ -33,8 +33,12 @@ async function search() {
 
   try {
     const res = await fetch(
-      `/api/find-buyers?item=${encodeURIComponent(item)}&city=${encodeURIComponent(state)}`
+      "https://buyer-finder-pyoa.onrender.com/api/find-buyers?item=" +
+        encodeURIComponent(item) +
+        "&city=" +
+        encodeURIComponent(state)
     );
+
     if (!res.ok) throw new Error();
     buyers = await res.json();
 
@@ -42,10 +46,11 @@ async function search() {
       status.textContent = "No buyers found — try a different product or state.";
       return;
     }
+
     status.textContent = `Found ${buyers.length} potential buyers:`;
     render();
   } catch {
-    status.textContent = "Something went wrong. Is the server running? (node server.js)";
+    status.textContent = "Something went wrong. Is the server running?";
   }
 }
 
@@ -86,19 +91,35 @@ async function sendEmail(i) {
     return;
   }
 
+  const company = buyers[i].name;
+  const country = buyers[i].address.split(",").pop().trim();
+  const website = buyers[i].website || "";
+  const category = item;
+
   btn.disabled = true;
   msg.className = "msg";
   msg.textContent = "Sending...";
+
   try {
-    const res = await fetch("/api/send-email", {
+    const res = await fetch("https://buyer-finder-pyoa.onrender.com/api/send-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ to, buyerName: buyers[i].name, sellerName: "A Home Decor Seller", item }),
+      body: JSON.stringify({
+        to,
+        buyerName: buyers[i].name,
+        sellerName: "Agatha S",
+        item,
+        company,
+        country,
+        website,
+        category
+      }),
     });
+
     const result = await res.json();
     if (result.success) {
       msg.className = "msg ok";
-      msg.textContent = "Email sent! Check spam folder too.";
+      msg.textContent = "Email sent!";
     } else {
       msg.className = "msg err";
       msg.textContent = result.error || "Failed to send.";
