@@ -77,7 +77,7 @@ app.get("/api/find-buyers", async (req, res) => {
 
 //Pitching email via Resend
 app.post("/api/send-email", express.json(), async (req, res) => {
- const { to, buyerName, sellerName, item, country, company, website, category } = req.body;
+  const { to, buyerName, sellerName, item, country, company, website, category } = req.body;
 
   if (!to || !to.includes("@")) {
     return res.status(400).json({ error: "Valid buyer email required" });
@@ -95,26 +95,26 @@ Direct Manufacturer from Nepal • Wholesale • OEM • Private Label
 Dear ${buyerName} Team,
 
 We were looking into wellness businesses in ${country} and recently came across ${company}.
-Having browsed your website (${website}), we noticed your keen interest and strong focus on ${category} and we were impressed with your commitment to quality and customer experience. 
-We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques and your brand’s aesthetic goes beautifully with our handcrafted Himalayan singing bowls
-made by skilled artisans in Nepal using traditional methods
+Having browsed your website (${website}), we noticed your keen interest and strong focus on ${category} and we were impressed with your commitment to quality and customer experience.
 
-We offer a range of products.
-Himalayan Singing Bowls Made By Hand
-Singing Bowls, Full Moon
-Vintage Finished Singing Bowls
-Why Our Bowls are Right for Your Store
-Sound Healing Bowls & Meditation
-Tingsha Cymbals & Meditation Tool
-Private Label & Custom Logo Manufacturing
+We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques.
+
+We offer a range of products:
+• Handmade Himalayan Singing Bowls
+• Full Moon Singing Bowls
+• Antique Finish Singing Bowls
+• Chakra Singing Bowl Sets
+• Sound Healing Bowls & Meditation
+• Tingsha Cymbals & Meditation Tools
+• Private Label & Custom Logo Manufacturing
 
 Why Our Bowls Fit Your Store
-✔ Handcrafted with authenticity
+✔ Authentic handmade craftsmanship
 ✔ Great for meditation, yoga, sound healing & wellness retail
-✔ OEM & Private Label options for your trademark or brand identity
+✔ OEM & Private Label options
 ✔ Worldwide shipping with dedicated export support
 
-We believe our products would make a great addition to ${company}’s current collection and would resonate strongly with your customers in ${country}.
+We believe our products would make a great addition to ${company}’s current collection and resonate strongly with your customers in ${country}.
 
 Please find our attachments enclosed. We would be happy to share wholesale pricing, samples, and customization options.
 
@@ -145,5 +145,6 @@ Thank you for your valuable time. We look forward to building a successful and l
     res.status(500).json({ error: "Email failed to send" });
   }
 });
+
 
 app.listen(3000, () => console.log("Server running on http://localhost:3000"));
