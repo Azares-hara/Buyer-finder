@@ -5,7 +5,7 @@ Live site: [https://buyer-finder-pyoa.onrender.com](https://buyer-finder-pyoa.on
 
 # DecorFind — Home Decor Buyer Finder
 
-A website that helps home decor makers and small sellers in the **United States** find potential wholesale buyers — boutiques, gift shops, and interior design studios — and pitch them via email in one click.
+A website that helps home decor makers and small sellers in the **United States** find potential wholesale buyers — boutiques, gift shops, and interior design studios and pitch them via email in one click.
 
 
 ## Features
