@@ -4,6 +4,7 @@ const path = require("path");
 const { Resend } = require("resend");
 
 const app = express();
+app.use(express.json());
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 app.get("/", (req, res) => {
@@ -144,6 +145,16 @@ ${process.env.COMPANY_NAME}<br>
     console.error(err);
     res.status(500).json({ error: "Email failed to send" });
   }
+});
+
+let events = [];
+//Webhook endpoint
+app.post("/webhook", (req, res) => {
+  console.log("Resend event:", req.body); 
+  res.sendStatus(200);
+});
+app.get("/events", (req, res) => {
+  res.json(events); //events for dashboard
 });
 
 
