@@ -133,7 +133,7 @@ Having browsed your website (${website}), we noticed your keen interest and stro
 ${sellerName}<br>
 Sales Executive<br>
 ${process.env.COMPANY_NAME}<br>
-📧 exportindia2026us@gmail.com<br>
+📧 exportindia2026us@gmail.com<br> (Please respond to this email not the present sender).
 📱 ${process.env.SENDER_PHONE}</p>
 
 <p>Thank you for your valuable time. We look forward to building a successful and long-term partnership with ${company}.</p>
@@ -151,10 +151,15 @@ let events = [];
 //Webhook endpoint
 //inbound email
 app.post("/api/inbound-email", (req, res) => {
-  console.log("Inbound email event:", req.body);
-  events.push(req.body);
-
-  res.sendStatus(200); 
+  try {
+    const event = req.body;
+    console.log("Inbound email event:", JSON.stringify(event, null, 2));
+    events.push(event);
+    res.sendStatus(200); 
+  } catch (err) {
+    console.error("Webhook error:", err);
+    res.sendStatus(500);
+  }
 });
 
 app.get("/events", (req, res) => {
