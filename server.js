@@ -4,6 +4,60 @@ const path = require("path");
 const { Resend } = require("resend");
 
 const app = express();
+
+app.post("/api/inbound-email", express.raw({ type: "application/json" }), async (req, res) => {
+  try {
+    //Verify the webhook is genuinely from Resend
+    const event = resend.webhooks.verify({
+      payload: req.body.toString("utf8"),
+      headers: {
+        id: req.headers["svix-id"],
+        timestamp: req.headers["svix-timestamp"],
+        signature: req.headers["svix-signature"],
+      },
+      secret: process.env.RESEND_WEBHOOK_SECRET,
+    });
+
+    if (event.type !== "email.received") return res.sendStatus(200);
+
+    //fetch the actual email body
+    const { data: email, error } = await resend.emails.receiving.get(event.data.email_id);
+    if (error) throw new Error(error.message);
+    
+    const attachments = [];
+    if (event.data.attachments?.length) {
+      const { data: attList } = await resend.emails.receiving.attachments.list({
+        emailId: event.data.email_id,
+      });
+      for (const att of attList?.data || []) {
+        const r = await fetch(att.download_url); // URL expires after ~1h
+        const buf = Buffer.from(await r.arrayBuffer());
+        attachments.push({ filename: att.filename, content: buf.toString("base64") });
+      }
+    }
+
+    //Forward to real inbox.
+    await resend.emails.send({
+      from: "Out There Exports <export@outthereexports.xyz>",
+      to: ["exportindia2026us@gmail.com"],
+      reply_to: event.data.from,
+      subject: `Fwd: ${event.data.subject}`,
+      html: email.html,
+      text: email.text,
+      attachments,
+      headers: {
+        "In-Reply-To": event.data.message_id, // keeps threading in Gmail
+      },
+    });
+
+    events.push({ type: "forwarded", from: event.data.from, subject: event.data.subject, at: new Date().toISOString() });
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("Inbound webhook error:", err);
+    res.sendStatus(500);
+  }
+});
+
 app.use(express.json());
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -57,7 +111,6 @@ app.get("/api/find-buyers", async (req, res) => {
   const { item } = req.query;
   const state = req.query.state || req.query.city; 
   if (!item || !state) return res.status(400).json({ error: "Missing item or state" });
-  if (!item || !state) return res.status(400).json({ error: "Missing item or state" });
 
   try {
     const cities = citiesByState[state] || [state];
@@ -90,6 +143,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
       reply_to: "exportindia2026us@gmail.com",
 
       to,
+      reply_to: "export@outthereexports.xyz",
       subject: `Home decor wholesale inquiry — ${item}`,
       html: `
 <p><b>Authentic Handmade Himalayan Singing Bowls<br>
@@ -133,7 +187,7 @@ Having browsed your website (${website}), we noticed your keen interest and stro
 ${sellerName}<br>
 Sales Executive<br>
 ${process.env.COMPANY_NAME}<br>
-📧 exportindia2026us@gmail.com<br> (Please respond to this email not the present sender).
+📧 exportindia2026us@gmail.com<br>
 📱 ${process.env.SENDER_PHONE}</p>
 
 <p>Thank you for your valuable time. We look forward to building a successful and long-term partnership with ${company}.</p>
