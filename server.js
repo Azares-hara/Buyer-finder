@@ -4,6 +4,10 @@ const path = require("path");
 const { Resend } = require("resend");
 
 const app = express();
+const resend = new Resend(process.env.RESEND_API_KEY);
+let events = [];
+app.use(express.json());
+
 
 app.post("/api/inbound-email", express.raw({ type: "application/json" }), async (req, res) => {
   try {
@@ -30,7 +34,7 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
         emailId: event.data.email_id,
       });
       for (const att of attList?.data || []) {
-        const r = await fetch(att.download_url); // URL expires after ~1h
+        const r = await fetch(att.download_url); 
         const buf = Buffer.from(await r.arrayBuffer());
         attachments.push({ filename: att.filename, content: buf.toString("base64") });
       }
@@ -58,8 +62,7 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
   }
 });
 
-app.use(express.json());
-const resend = new Resend(process.env.RESEND_API_KEY);
+
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
@@ -140,7 +143,6 @@ app.post("/api/send-email", express.json(), async (req, res) => {
   try {
     await resend.emails.send({
       from: process.env.SENDER_EMAIL, 
-      reply_to: "exportindia2026us@gmail.com",
 
       to,
       reply_to: "export@outthereexports.xyz",
@@ -200,25 +202,5 @@ ${process.env.COMPANY_NAME}<br>
     res.status(500).json({ error: "Email failed to send" });
   }
 });
-
-let events = [];
-//Webhook endpoint
-//inbound email
-app.post("/api/inbound-email", (req, res) => {
-  try {
-    const event = req.body;
-    console.log("Inbound email event:", JSON.stringify(event, null, 2));
-    events.push(event);
-    res.sendStatus(200); 
-  } catch (err) {
-    console.error("Webhook error:", err);
-    res.sendStatus(500);
-  }
-});
-
-app.get("/events", (req, res) => {
-  res.json(events); //events for dashboard
-});
-
 
 app.listen(3000, () => console.log("Server running on http://localhost:3000"));
