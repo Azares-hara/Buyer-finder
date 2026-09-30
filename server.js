@@ -149,10 +149,14 @@ ${process.env.COMPANY_NAME}<br>
 
 let events = [];
 //Webhook endpoint
-app.post("/webhook", (req, res) => {
-  console.log("Resend event:", req.body); 
-  res.sendStatus(200);
+//inbound email
+app.post("/api/inbound-email", (req, res) => {
+  console.log("Inbound email event:", req.body);
+  events.push(req.body);
+
+  res.sendStatus(200); 
 });
+
 app.get("/events", (req, res) => {
   res.json(events); //events for dashboard
 });
