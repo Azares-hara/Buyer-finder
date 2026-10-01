@@ -60,6 +60,23 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
     console.error("Inbound webhook error:", err);
     res.sendStatus(500);
   }
+    let replies = [];
+
+    replies.unshift({
+      from: event.data.from,
+      to: event.data.to,
+      subject: event.data.subject,
+      text: email.text,
+      html: email.html,
+      date: event.created_at || new Date().toISOString(),
+      messageId: event.data.message_id,
+});
+
+app.get("/api/replies", (req, res) => {
+  if (req.headers["x-dashboard-token"] !== process.env.DASHBOARD_TOKEN) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  res.json(replies);
 });
 
 
