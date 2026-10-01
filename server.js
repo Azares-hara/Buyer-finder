@@ -6,12 +6,12 @@ const { Resend } = require("resend");
 const app = express();
 const resend = new Resend(process.env.RESEND_API_KEY);
 let events = [];
-app.use(express.json());
+let replies = [];  
 
+app.use(express.json());
 
 app.post("/api/inbound-email", express.raw({ type: "application/json" }), async (req, res) => {
   try {
-    //Verify the webhook is genuinely from Resend
     const event = resend.webhooks.verify({
       payload: req.body.toString("utf8"),
       headers: {
@@ -24,23 +24,21 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
 
     if (event.type !== "email.received") return res.sendStatus(200);
 
-    //fetch the actual email body
     const { data: email, error } = await resend.emails.receiving.get(event.data.email_id);
     if (error) throw new Error(error.message);
-    
+
     const attachments = [];
     if (event.data.attachments?.length) {
       const { data: attList } = await resend.emails.receiving.attachments.list({
         emailId: event.data.email_id,
       });
       for (const att of attList?.data || []) {
-        const r = await fetch(att.download_url); 
+        const r = await fetch(att.download_url);
         const buf = Buffer.from(await r.arrayBuffer());
         attachments.push({ filename: att.filename, content: buf.toString("base64") });
       }
     }
 
-    //Forward to real inbox.
     await resend.emails.send({
       from: "Out There Exports <export@outthereexports.xyz>",
       to: ["exportindia2026us@gmail.com"],
@@ -50,17 +48,12 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
       text: email.text,
       attachments,
       headers: {
-        "In-Reply-To": event.data.message_id, // keeps threading in Gmail
+        "In-Reply-To": event.data.message_id,
+        "References": event.data.message_id,
       },
     });
 
     events.push({ type: "forwarded", from: event.data.from, subject: event.data.subject, at: new Date().toISOString() });
-    res.sendStatus(200);
-  } catch (err) {
-    console.error("Inbound webhook error:", err);
-    res.sendStatus(500);
-  }
-    let replies = [];
 
     replies.unshift({
       from: event.data.from,
@@ -70,6 +63,13 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
       html: email.html,
       date: event.created_at || new Date().toISOString(),
       messageId: event.data.message_id,
+    });
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error("Inbound webhook error:", err);
+    res.sendStatus(500);
+  }
 });
 
 app.get("/api/replies", (req, res) => {
