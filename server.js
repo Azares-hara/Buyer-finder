@@ -22,39 +22,59 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
       secret: process.env.RESEND_WEBHOOK_SECRET,
     });
 
-    if (event.type !== "email.received") return res.sendStatus(200);
+    if (event.type !== "email.received") {
+      return res.sendStatus(200); 
+    }
 
-    const { data: email, error } = await resend.emails.receiving.get(event.data.email_id);
-    if (error) throw new Error(error.message);
+    let email;
+    try {
+      const { data, error } = await resend.emails.receiving.get(event.data.email_id);
+      if (error) throw new Error(error.message);
+      email = data;
+    } catch (err) {
+      console.error("Failed to fetch email body:", err);
+      return res.sendStatus(200); // don’t crash webhook
+    }
 
     const attachments = [];
     if (event.data.attachments?.length) {
-      const { data: attList } = await resend.emails.receiving.attachments.list({
-        emailId: event.data.email_id,
-      });
-      for (const att of attList?.data || []) {
-        const r = await fetch(att.download_url);
-        const buf = Buffer.from(await r.arrayBuffer());
-        attachments.push({ filename: att.filename, content: buf.toString("base64") });
+      try {
+        const { data: attList } = await resend.emails.receiving.attachments.list({
+          emailId: event.data.email_id,
+        });
+        for (const att of attList?.data || []) {
+          try {
+            const r = await fetch(att.download_url);
+            const buf = Buffer.from(await r.arrayBuffer());
+            attachments.push({ filename: att.filename, content: buf.toString("base64") });
+          } catch (err) {
+            console.error("Attachment fetch failed:", att.filename, err);
+          }
+        }
+      } catch (err) {
+        console.error("Attachment list failed:", err);
       }
     }
 
-    await resend.emails.send({
-      from: "Out There Exports <export@outthereexports.xyz>",
-      to: ["exportindia2026us@gmail.com"],
-      reply_to: event.data.from,
-      subject: `Fwd: ${event.data.subject}`,
-      html: email.html,
-      text: email.text,
-      attachments,
-      headers: {
-        "In-Reply-To": event.data.message_id,
-        "References": event.data.message_id,
-      },
-    });
+    try {
+      await resend.emails.send({
+        from: "Out There Exports <export@outthereexports.xyz>",
+        to: ["exportindia2026us@gmail.com"],
+        reply_to: event.data.from,
+        subject: `Fwd: ${event.data.subject}`,
+        html: email.html,
+        text: email.text,
+        attachments,
+        headers: {
+          "In-Reply-To": event.data.message_id,
+          "References": event.data.message_id,
+        },
+      });
+    } catch (err) {
+      console.error("Forwarding failed:", err);
+    }
 
     events.push({ type: "forwarded", from: event.data.from, subject: event.data.subject, at: new Date().toISOString() });
-
     replies.unshift({
       from: event.data.from,
       to: event.data.to,
@@ -67,10 +87,11 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
 
     res.sendStatus(200);
   } catch (err) {
-    console.error("Inbound webhook error:", err);
-    res.sendStatus(500);
+    console.error("Inbound webhook verification error:", err);
+    res.sendStatus(200); 
   }
 });
+
 
 app.get("/api/replies", (req, res) => {
   if (req.headers["x-dashboard-token"] !== process.env.DASHBOARD_TOKEN) {
