@@ -188,10 +188,10 @@ Having browsed your website (${website}), we noticed your keen interest and stro
 
 <p>Why Our Bowls Fit Your Store</p>
 <ul>
-  <li>✔ Authentic handmade craftsmanship</li>
-  <li>✔ Great for meditation, yoga, sound healing & wellness retail</li>
-  <li>✔ OEM & Private Label options</li>
-  <li>✔ Worldwide shipping with dedicated export support</li>
+  <li>Authentic handmade craftsmanship</li>
+  <li>Great for meditation, yoga, sound healing & wellness retail</li>
+  <li>OEM & Private Label options</li>
+  <li>Worldwide shipping with dedicated export support</li>
 </ul>
 
 <p>We believe our products would make a great addition to ${company}’s current collection and resonate strongly with your customers in ${country}.</p>
