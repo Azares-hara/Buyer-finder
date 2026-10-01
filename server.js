@@ -114,7 +114,7 @@ const citiesByState = {
   Alabama: ["Birmingham", "Montgomery", "Mobile", "Huntsville", "Tuscaloosa"],
   Alaska: ["Anchorage", "Fairbanks", "Juneau", "Sitka", "Ketchikan"],
   Arizona: ["Phoenix", "Tucson", "Mesa", "Chandler", "Scottsdale"],
-  California: ["Los Angeles", "San Francisco", "San Diego", "Sacramento", "San Jose"],
+  California: ["Los Angeles", "San Francisco", "San Diego", "Sacramento", "San Jose", "Albany", "Alondra Park", "Alhambra", "Aliso Viejo", "Fresno", "Bakersfield", "Riverside", "Santa Ana", "Oakland", "Long Beach", "Anaheim"],
   Florida: ["Jacksonville", "Miami", "Tampa", "Orlando", "St. Petersburg"],
   "New York": ["New York City", "Buffalo", "Rochester", "Albany", "Yonkers"],
   Texas: ["Austin", "Houston", "Dallas", "San Antonio", "Fort Worth"],
