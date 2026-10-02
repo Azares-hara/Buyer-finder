@@ -19,11 +19,12 @@ function stars(rating) {
 async function search() {
   const item = document.getElementById("item").value.trim();
   const state = document.getElementById("state").value;
+  const city = document.getElementById("city").value;
   const status = document.getElementById("status");
   const results = document.getElementById("results");
 
-  if (!item || !state) {
-    status.textContent = "Please enter what you sell and select a state.";
+  if (!item || !state || !city) {
+    status.textContent = "Please enter what you sell, select a state, and choose a city.";
     return;
   }
 
@@ -36,7 +37,7 @@ async function search() {
       "https://buyer-finder-pyoa.onrender.com/api/find-buyers?item=" +
         encodeURIComponent(item) +
         "&city=" +
-        encodeURIComponent(state)
+        encodeURIComponent(city + " " + state)
     );
 
     if (!res.ok) throw new Error();
