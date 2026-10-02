@@ -21,6 +21,7 @@
         <li class="nav-item"><a href="#" class="nav-link">Home</a></li>
         <li class="nav-item"><a href="#about" class="nav-link">About</a></li>
         <li class="nav-item"><a href="#find" class="nav-link">Find Buyers</a></li>
+        <li class="nav-item"><a href="#dashboard" class="nav-link">Dashboard</a></li>
         <li class="nav-item"><a href="#how" class="nav-link">How It Works</a></li>
         <li class="nav-item"><a href="#gallery" class="nav-link">Gallery</a></li>
         <li class="nav-item"><a href="#contact" class="nav-link">Contact</a></li>
@@ -97,7 +98,23 @@
         <div id="results" class="buyer-grid"></div>
       </div>
     </section>
+    <!-- Dashboard -->
+    <section class="dashboard-section section" id="dashboard">
+      <div class="dash-wrap">
+        <div class="dash-header">
+          <h1><i class="fa-solid fa-inbox"></i> Buyer Replies</h1>
+          <div class="stat-pill"><b id="reply-count">0</b> replies received</div>
+        </div>
 
+        <div class="token-bar" id="token-bar">
+          <input id="token-input" type="password" placeholder="Dashboard token (set in Render as DASHBOARD_TOKEN)">
+          <button onclick="saveToken()">Unlock</button>
+        </div>
+
+        <p id="status-line"></p>
+        <div id="reply-list"></div>
+      </div>
+    </section>
     <!--How it works-->
     <section class="how-section section" id="how">
       <h2 class="section-title">How It Works</h2>
