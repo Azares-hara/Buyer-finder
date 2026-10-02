@@ -5,11 +5,14 @@ const { Resend } = require("resend");
 
 const app = express();
 const resend = new Resend(process.env.RESEND_API_KEY);
+
 let events = [];
-let replies = [];  
+let replies = [];
+let pitchesSent = 0; 
 
 app.use(express.json());
 
+//innbound email webhook
 app.post("/api/inbound-email", express.raw({ type: "application/json" }), async (req, res) => {
   try {
     const event = resend.webhooks.verify({
@@ -23,7 +26,7 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
     });
 
     if (event.type !== "email.received") {
-      return res.sendStatus(200); 
+      return res.sendStatus(200);
     }
 
     let email;
@@ -33,7 +36,7 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
       email = data;
     } catch (err) {
       console.error("Failed to fetch email body:", err);
-      return res.sendStatus(200); 
+      return res.sendStatus(200);
     }
 
     const attachments = [];
@@ -88,11 +91,11 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
     res.sendStatus(200);
   } catch (err) {
     console.error("Inbound webhook verification error:", err);
-    res.sendStatus(200); 
+    res.sendStatus(200);
   }
 });
 
-
+//replies endpoint
 app.get("/api/replies", (req, res) => {
   if (req.headers["x-dashboard-token"] !== process.env.DASHBOARD_TOKEN) {
     return res.status(401).json({ error: "Unauthorized" });
@@ -100,16 +103,21 @@ app.get("/api/replies", (req, res) => {
   res.json(replies);
 });
 
+//Pitch count endpoint
+app.get("/api/pitches-count", (req, res) => {
+  if (req.headers["x-dashboard-token"] !== process.env.DASHBOARD_TOKEN) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  res.json({ count: pitchesSent });
+});
 
-
+//frontend
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
-//all static files
 app.use(express.static(__dirname));
 
-
-//cities by state
+//Cities by state
 const citiesByState = {
   Alabama: ["Birmingham", "Montgomery", "Mobile", "Huntsville", "Tuscaloosa"],
   Alaska: ["Anchorage", "Fairbanks", "Juneau", "Sitka", "Ketchikan"],
@@ -121,9 +129,7 @@ const citiesByState = {
   Washington: ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue"]
 };
 
-
-
-//Calling Google Places API
+//Google Places API
 async function findBuyers(item, city) {
   const response = await fetch("https://places.googleapis.com/v1/places:searchText", {
     method: "POST",
@@ -146,31 +152,28 @@ async function findBuyers(item, city) {
 }
 
 
-
-//Find buyers in multiple states in cities
 app.get("/api/find-buyers", async (req, res) => {
   const { item } = req.query;
-  const state = req.query.state || req.query.city; 
+  const state = req.query.state || req.query.city;
   if (!item || !state) return res.status(400).json({ error: "Missing item or state" });
 
   try {
     const cities = citiesByState[state] || [state];
     let allBuyers = [];
-    
+
     for (const city of cities) {
       const buyers = await findBuyers(item, `${city} ${state}`);
       allBuyers.push(...buyers);
     }
     const unique = [...new Map(allBuyers.map(b => [b.name, b])).values()];
     res.json(unique);
-    
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-//Pitching email via Resend
+
 app.post("/api/send-email", express.json(), async (req, res) => {
   const { to, buyerName, sellerName, item, country, company, website, category } = req.body;
 
@@ -180,60 +183,14 @@ app.post("/api/send-email", express.json(), async (req, res) => {
 
   try {
     await resend.emails.send({
-      from: process.env.SENDER_EMAIL, 
-
+      from: process.env.SENDER_EMAIL,
       to,
       reply_to: "export@outthereexports.xyz",
       subject: `Home decor wholesale inquiry — ${item}`,
-      html: `
-<p><b>Authentic Handmade Himalayan Singing Bowls<br>
-Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
-
-<p>Dear ${buyerName} Team,</p>
-
-<p>We were looking into wellness businesses in ${country} and recently came across ${company}.<br>
-Having browsed your website (${website}), we noticed your keen interest and strong focus on ${category} and we were impressed with your commitment to quality and customer experience.</p>
-
-<p>We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques.</p>
-
-<p>We offer a range of products:</p>
-<ul>
-  <li>Handmade Himalayan Singing Bowls</li>
-  <li>Full Moon Singing Bowls</li>
-  <li>Antique Finish Singing Bowls</li>
-  <li>Chakra Singing Bowl Sets</li>
-  <li>Sound Healing Bowls & Meditation</li>
-  <li>Tingsha Cymbals & Meditation Tools</li>
-  <li>Private Label & Custom Logo Manufacturing</li>
-</ul>
-
-<p>Why Our Bowls Fit Your Store</p>
-<ul>
-  <li>Authentic handmade craftsmanship</li>
-  <li>Great for meditation, yoga, sound healing & wellness retail</li>
-  <li>OEM & Private Label options</li>
-  <li>Worldwide shipping with dedicated export support</li>
-</ul>
-
-<p>We believe our products would make a great addition to ${company}’s current collection and resonate strongly with your customers in ${country}.</p>
-
-<p>Please find our attachments enclosed. We would be happy to share wholesale pricing, samples, and customization options.</p>
-<p>
-<a href="https://drive.google.com/uc?export=download&id=15eZxHUjFMz0H-NrpRZWQkgScGRxqUGrR">Singing bowl poster (PDF)</a><br>
-<a href="https://drive.google.com/uc?export=download&id=1pGJ-LaV5smg1ePTLSHDRbsWuX0KqXmyY">Singing bowl presentation (PDF)</a>
-</p>
-
-<p>Kind Regards,<br>
-${sellerName}<br>
-Sales Executive<br>
-${process.env.COMPANY_NAME}<br>
-📧 exportindia2026us@gmail.com<br>
-📱 ${process.env.SENDER_PHONE}</p>
-
-<p>Thank you for your valuable time. We look forward to building a successful and long-term partnership with ${company}.</p>
- `,
+      html: `... your email body ...`
     });
 
+    pitchesSent++;
     res.json({ success: true });
   } catch (err) {
     console.error(err);
