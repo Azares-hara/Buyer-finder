@@ -84,9 +84,9 @@ function replyTo(from) {
   window.open("https://mail.google.com/mail/?view=cm&to=" + encodeURIComponent(from), "_blank");
 }
 
-
+// Restore token input on load
 document.getElementById("token-input").value = getToken();
 
-
+// Refresh every 20 seconds
 setInterval(load, 20000);
 load();
