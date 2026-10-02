@@ -33,7 +33,7 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
       email = data;
     } catch (err) {
       console.error("Failed to fetch email body:", err);
-      return res.sendStatus(200); // don’t crash webhook
+      return res.sendStatus(200); 
     }
 
     const attachments = [];
