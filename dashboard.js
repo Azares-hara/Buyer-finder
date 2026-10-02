@@ -1,6 +1,8 @@
 const TOKEN_KEY = "df_dashboard_token";
 
-function getToken() { return localStorage.getItem(TOKEN_KEY) || ""; }
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY) || "";
+}
 
 function saveToken() {
   const t = document.getElementById("token-input").value.trim();
@@ -10,7 +12,11 @@ function saveToken() {
 
 function esc(s) {
   return (s || "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
   }[c]));
 }
 
@@ -26,6 +32,7 @@ async function load() {
   }
 
   try {
+    // Replies
     const res = await fetch("/api/replies", { headers: { "x-dashboard-token": token } });
     if (res.status === 401) {
       status.textContent = "Invalid token. Check DASHBOARD_TOKEN in Render env vars.";
@@ -35,6 +42,12 @@ async function load() {
     const replies = await res.json();
     document.getElementById("reply-count").textContent = replies.length;
 
+    // Pitch count
+    const pitchRes = await fetch("/api/pitches-count", { headers: { "x-dashboard-token": token } });
+    const pitchData = await pitchRes.json();
+    document.getElementById("pitch-count").textContent = pitchData.count;
+
+    // Render replies
     if (!replies.length) {
       status.textContent = "No replies yet. They will appear here within seconds of a buyer responding.";
       list.innerHTML = "";
@@ -59,7 +72,6 @@ async function load() {
 }
 
 function showHtml(i) {
-  //fetch to get html field safely
   fetch("/api/replies", { headers: { "x-dashboard-token": getToken() } })
     .then(r => r.json())
     .then(replies => {
@@ -69,12 +81,12 @@ function showHtml(i) {
 }
 
 function replyTo(from) {
-  //Opens Gmail draft addressed to the buyer.
   window.open("https://mail.google.com/mail/?view=cm&to=" + encodeURIComponent(from), "_blank");
 }
 
-//restore token input on load
+
 document.getElementById("token-input").value = getToken();
+
 
 setInterval(load, 20000);
 load();
