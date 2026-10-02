@@ -187,7 +187,51 @@ app.post("/api/send-email", express.json(), async (req, res) => {
       to,
       reply_to: "export@outthereexports.xyz",
       subject: `Home decor wholesale inquiry — ${item}`,
-      html: `... your email body ...`
+      html: `<p><b>Authentic Handmade Himalayan Singing Bowls<br>
+Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
+
+<p>Dear ${buyerName} Team,</p>
+
+<p>We were looking into wellness businesses in ${country} and recently came across ${company}.<br>
+Having browsed your website (${website}), we noticed your keen interest and strong focus on ${category} and we were impressed with your commitment to quality and customer experience.</p>
+
+<p>We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques.</p>
+
+<p>We offer a range of products:</p>
+<ul>
+  <li>Handmade Himalayan Singing Bowls</li>
+  <li>Full Moon Singing Bowls</li>
+  <li>Antique Finish Singing Bowls</li>
+  <li>Chakra Singing Bowl Sets</li>
+  <li>Sound Healing Bowls & Meditation</li>
+  <li>Tingsha Cymbals & Meditation Tools</li>
+  <li>Private Label & Custom Logo Manufacturing</li>
+</ul>
+
+<p>Why Our Bowls Fit Your Store</p>
+<ul>
+  <li>Authentic handmade craftsmanship</li>
+  <li>Great for meditation, yoga, sound healing & wellness retail</li>
+  <li>OEM & Private Label options</li>
+  <li>Worldwide shipping with dedicated export support</li>
+</ul>
+
+<p>We believe our products would make a great addition to ${company}’s current collection and resonate strongly with your customers in the ${country}.</p>
+
+<p>Please find our attachments enclosed. We would be happy to share wholesale pricing, samples, and customization options.</p>
+<p>
+<a href="https://drive.google.com/uc?export=download&id=15eZxHUjFMz0H-NrpRZWQkgScGRxqUGrR">Singing bowl poster (PDF)</a><br>
+<a href="https://drive.google.com/uc?export=download&id=1pGJ-LaV5smg1ePTLSHDRbsWuX0KqXmyY">Singing bowl presentation (PDF)</a>
+</p>
+
+<p>Kind Regards,<br>
+${sellerName}<br>
+Sales Executive<br>
+${process.env.COMPANY_NAME}<br>
+📧 exportindia2026us@gmail.com<br>
+📱 ${process.env.SENDER_PHONE}</p>
+
+<p>Thank you for your valuable time. We look forward to building a successful and long-term partnership with ${company}.</p>`
     });
 
     pitchesSent++;
