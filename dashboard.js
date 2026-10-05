@@ -24,6 +24,7 @@ async function load() {
   const token = getToken();
   const status = document.getElementById("status-line");
   const list = document.getElementById("reply-list");
+  
 
   if (!token) {
     status.textContent = "Enter your dashboard token to view replies.";
@@ -44,9 +45,30 @@ async function load() {
 
     // Pitch count
     const pitchRes = await fetch("/api/pitches-count", { headers: { "x-dashboard-token": token } });
+    const pitchesRes = await fetch("/api/pitches", {headers: { "x-dashboard-token": token }});
     const pitchData = await pitchRes.json();
+    const pitches = await pitchesRes.json();
+    console.log(pitches);
     document.getElementById("pitch-count").textContent = pitchData.count;
 
+    
+    const pitchList = document.getElementById("pitch-list");
+ 
+    pitchList.innerHTML = pitches.map(p => `
+<div class="reply-card">
+<div class="from">${esc(p.company)}</div>
+<div class="meta">
+${esc(p.email)} ·
+${new Date(p.sentAt).toLocaleString()}
+</div>
+<div class="subject">
+${esc(p.subject)}
+</div>
+<div class="body">
+Item: ${esc(p.item)}
+</div>
+</div>
+`).join("");
     // Render replies
     if (!replies.length) {
       status.textContent = "No replies yet. They will appear here within seconds of a buyer responding.";
