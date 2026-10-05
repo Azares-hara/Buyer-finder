@@ -382,6 +382,13 @@ header .navbar {
   cursor: pointer;
 }
 
+.dashboard-subtitle {
+  color: var(--primary-color);
+  margin: 24px 0 12px;
+  font-size: var(--font-size-1);
+  font-weight: var(--font-weight-semibold);
+}
+
 .reply-card {
   background: var(--white-color);
   border-radius: 12px;
