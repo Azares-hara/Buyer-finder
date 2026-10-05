@@ -255,8 +255,6 @@ ${process.env.COMPANY_NAME}<br>
   buyerName,
   company,
   email: to,
-  subject, 
-  html: pitchHtml,
   item,
   country,
   website,
