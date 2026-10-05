@@ -1,3 +1,20 @@
+const fs = require("fs");
+const PITCHES_FILE = "./pitches.json";
+
+function loadPitches() {
+  try {
+    return JSON.parse(fs.readFileSync(PITCHES_FILE, "utf8"));
+  } catch {
+    return [];
+  }
+}
+
+function savePitch(pitch) {
+  const pitches = loadPitches();
+  pitches.unshift(pitch);
+  fs.writeFileSync(PITCHES_FILE, JSON.stringify(pitches, null, 2));
+}
+
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
@@ -233,13 +250,34 @@ ${process.env.COMPANY_NAME}<br>
 
 <p>Thank you for your valuable time. We look forward to building a successful and long-term partnership with ${company}.</p>`
     });
-
+    savePitch({
+  sentAt: new Date().toISOString(),
+  buyerName,
+  company,
+  email: to,
+  subject, 
+  html: pitchHtml,
+  item,
+  country,
+  website,
+  category,
+  sellerName,
+  subject: `Home decor wholesale inquiry — ${item}`
+});
     pitchesSent++;
     res.json({ success: true });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Email failed to send" });
   }
+});
+
+app.get("/api/pitches", (req, res) => {
+if (req.headers["x-dashboard-token"] !== process.env.DASHBOARD_TOKEN) {
+return res.status(401).json({ error: "Unauthorized" });
+}
+ 
+res.json(loadPitches());
 });
 
 app.listen(3000, () => console.log("Server running on http://localhost:3000"));
