@@ -15,12 +15,15 @@ const citiesByState = {
   Alabama: ["Birmingham", "Montgomery", "Mobile", "Huntsville", "Tuscaloosa"],
   Alaska: ["Anchorage", "Fairbanks", "Juneau", "Sitka", "Ketchikan"],
   Arizona: ["Phoenix", "Tucson", "Mesa", "Chandler", "Scottsdale"],
-  California: ["Los Angeles", "San Francisco", "San Diego", "Sacramento", "San Jose", "Albany", "Alondra Park", "Alhambra", "Aliso Viejo","Adelanto", "Agoura Hills", "Alameda", "Alamo", "Alpine", "Alta Sierra", "Alum Rock", "American Canyon", "Anderson", "Antioch", "Apple Valley", "Aptos", "Arcadia", "Arcata", "Arden-Arcade", "Arroyo Grande", "Fresno", "Bakersfield", "Riverside", "Santa Ana", "Oakland", "Long Beach", "Anaheim", "Bay Point", "Baywood-Los Osos", "Beaumont", "Capitola"],
+  California: ["Los Angeles", "San Francisco", "San Diego", "Sacramento", "San Jose", "Albany", "Alondra Park", "Alhambra", "Aliso Viejo","Adelanto", "Agoura Hills", "Alameda", "Alamo", "Alpine", "Alta Sierra", "Alum Rock", "American Canyon", "Anderson", "Antioch", "Apple Valley", "Aptos", "Arcadia", "Arcata", "Arden-Arcade", "Arroyo Grande", "Atascadero", "Atherton", "August", "Fresno", "Bakersfield", "Banning", "Bell", "Bell Gardens", "Bellflower", "Belmont", "Benicia", "Berkeley", "Bermuda Dunes", "Beverly Hills", "Blackhawk-Camino Tassajara", "Bloomington", "Blythe", "Bonadelle Ranchos-Madera Ranchos", "Bostonia", "Boyes Hot Springs", "Brawley", "Brentwood", "Buena Park", "Burbank", "Burlingame", "California City", "Camarillo", "Campbell", "Canyon Lake", "Carlsbad", "Carpinteria", "Carson", "Casa de Oro-Mount Helix", "Castro Valley", "Coachella", "Coalinga", "Colton", "Commerce", "Concord", "Corcoran", "Corona", "Country Club", "Cudahy", "Delhi", "Desert Hot Springs", "Downey", "Dublin", "Riverside", "Santa Ana", "Oakland", "Long Beach", "Anaheim", "Bay Point", "Baywood-Los Osos", "Beaumont", "Capitola"],
   Florida: ["Jacksonville", "Miami", "Tampa", "Orlando", "St. Petersburg"],
   "New York": ["New York City", "Buffalo", "Rochester", "Albany", "Yonkers"],
   Texas: ["Austin", "Houston", "Dallas", "San Antonio", "Fort Worth"],
   Washington: ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue"]
 };
+Object.values(citiesByState).forEach(cities => {
+cities.sort((a, b) => a.localeCompare(b));
+});
 
 document.getElementById("state").addEventListener("change", function() {
   const state = this.value;
