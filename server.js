@@ -145,9 +145,7 @@ const citiesByState = {
   Texas: ["Austin", "Houston", "Dallas", "San Antonio", "Fort Worth"],
   Washington: ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue"]
 };
-Object.values(citiesByState).forEach(cities => {
-cities.sort((a, b) => a.localeCompare(b));
-});
+
 //Google Places API
 async function findBuyers(item, city) {
   const response = await fetch("https://places.googleapis.com/v1/places:searchText", {
