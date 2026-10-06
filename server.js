@@ -210,8 +210,8 @@ Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
 <p>Dear ${buyerName} Team,</p>
 
 <p>
-We were researching wellness and holistic businesses in the ${country} and came across ${company}.<br>
-After exploring your website (${website}), we were impressed by your dedication to providing quality products and services that support meditation, mindfulness, sound healing, and overall well-being.
+We recently came across ${company} while researching businesses in the ${country} that offer unique products and experiences to their customers.<br>
+After exploring your website (${website}), we were impressed by the quality of your offerings and your commitment to serving your community with carefully selected products and services.
 </p>
 
 <p>We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques.</p>
