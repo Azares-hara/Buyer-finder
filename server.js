@@ -203,7 +203,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to,
       reply_to: "export@outthereexports.xyz",
-      subject: `Home decor wholesale inquiry — ${item}`,
+      subject: `Wholesale Product Supply Opportunity`,
       html: `<p><b>Authentic Handmade Himalayan Singing Bowls<br>
 Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
 
