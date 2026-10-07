@@ -260,7 +260,7 @@ header .navbar {
   color: var(--secondary-color);
 }
 
-/*----- find buyers / search section -----*/
+/*find buyers */
 .search-section {
   padding: 50px 0 100px;
   background: var(--white-color);
@@ -397,7 +397,7 @@ header .navbar {
   padding: 18px 22px;
   margin-bottom: 14px;
 }
-/*----- buyer result cards -----*/
+/*- buyer result cards -*/
 .buyer-grid {
   display: flex;
   flex-direction: column;
@@ -512,7 +512,7 @@ header .navbar {
   }
 }
 
-/*---- how it works section -----*/
+/* how it works section */
 .how-section {
   padding: 50px 0 100px;
   background: var(--light-pink-color);
@@ -556,7 +556,7 @@ header .navbar {
   line-height: 1.6;
 }
 
-/*---- gallery section -----*/
+/*-- gallery section ---*/
 .gallery-section {
   padding: 50px 0 100px;
   background: var(--white-color);
@@ -585,7 +585,7 @@ header .navbar {
   transform: scale(1.03);
 }
 
-/*contact us section */
+/*contact us */
 .contact-section {
   padding: 50px 0 100px;
   background: var(--light-pink-color);
@@ -683,7 +683,7 @@ header .navbar {
   color: var(--white-color);
 }
 
-/*------responsive: max width 1024px -----*/
+/*responsive: max width 1024px */
 @media screen and (max-width: 1024px) {
   .buyer-grid .buyer {
     width: calc(100% / 2 - 30px);
@@ -703,7 +703,7 @@ header .navbar {
   }
 }
 
-/*------responsive: max width 900px -----*/
+/*responsive: max width 900px--*/
 @media screen and (max-width: 900px) {
   :root {
     --font-size-m: 1rem;
@@ -821,3 +821,35 @@ header .navbar {
   }
 }
 
+
+
+/* Bulk send */
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: #f4f4f4;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+.bulk-bar label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.buyer-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.buyer-head input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 4px;
+  cursor: pointer;
+  accent-color: #c0392b;
+}
