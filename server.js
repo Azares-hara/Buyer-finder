@@ -1,3 +1,4 @@
+
 const fs = require("fs");
 const PITCHES_FILE = "./pitches.json";
 
@@ -190,6 +191,85 @@ app.get("/api/find-buyers", async (req, res) => {
   }
 });
 
+function buildPitchEmail({
+  buyerName,
+  sellerName,
+  item,
+  country,
+  company,
+  website,
+  category
+}) {
+  return `
+<p><b>Authentic Handmade Himalayan Singing Bowls<br>
+Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
+
+<p>Dear ${buyerName || company} Team,</p>
+
+<p>
+We recently came across ${company} while researching businesses in ${country} that offer unique products and experiences to their customers.<br>
+After exploring your website (${website || "N/A"}), we were impressed by the quality of your offerings and your commitment to serving your community with carefully selected products and services.
+</p>
+
+<p>
+We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques.
+</p>
+
+<p>We offer a range of products:</p>
+
+<ul>
+  <li>Handmade Himalayan Singing Bowls</li>
+  <li>Full Moon Singing Bowls</li>
+  <li>Antique Finish Singing Bowls</li>
+  <li>Chakra Singing Bowl Sets</li>
+  <li>Sound Healing Bowls & Meditation Tools</li>
+  <li>Tingsha Cymbals & Meditation Accessories</li>
+  <li>Private Label & Custom Logo Manufacturing</li>
+</ul>
+
+<p><b>Why Our Bowls Fit Your Store</b></p>
+
+<ul>
+  <li>Authentic handmade craftsmanship</li>
+  <li>Ideal for meditation, yoga, sound healing and wellness retail</li>
+  <li>OEM & Private Label options</li>
+  <li>Worldwide shipping with dedicated export support</li>
+</ul>
+
+<p>
+We believe our products would be a valuable addition to ${company}'s collection and resonate strongly with your customers.
+</p>
+
+<p>
+We would be happy to share wholesale pricing, samples, and customization options.
+</p>
+
+<p>
+<a href="https://drive.google.com/uc?export=download&id=15eZxHUjFMz0H-NrpRZWQkgScGRxqUGrR">
+Download Singing Bowl Poster (PDF)
+</a>
+<br><br>
+<a href="https://drive.google.com/uc?export=download&id=1pGJ-LaV5smg1ePTLSHDRbsWuX0KqXmyY">
+Download Singing Bowl Presentation (PDF)
+</a>
+</p>
+
+<p>
+Kind Regards,<br>
+${sellerName}<br>
+Sales Executive<br>
+${process.env.COMPANY_NAME}<br>
+📧 exportindia2026us@gmail.com<br>
+📱 ${process.env.SENDER_PHONE}
+</p>
+
+<p>
+Thank you for your valuable time. We look forward to building a successful and long-term partnership with ${company}.
+</p>
+`;
+}
+
+
 
 app.post("/api/send-email", express.json(), async (req, res) => {
   const { to, buyerName, sellerName, item, country, company, website, category } = req.body;
@@ -203,7 +283,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to,
       reply_to: "export@outthereexports.xyz",
-      subject: `Home decor wholesale inquiry — ${item}`,
+      subject: `Wholesale Product Supply Opportunity`,
       html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category })
     });
     savePitch({
@@ -216,7 +296,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
   website,
   category,
   sellerName,
-  subject: `Home decor wholesale inquiry — ${item}`
+  subject: `Wholesale Product Supply Opportunity`
 });
     pitchesSent++;
     res.json({ success: true });
