@@ -191,7 +191,7 @@ function scoreSeller(place) {
   for (const w of RETAIL_WORDS) if (name.includes(w)) score += 2;
   for (const w of SERVICE_WORDS) if (name.includes(w)) score -= 3;
 
-  //Google's own categorization: "store" type is a strong retail signal
+
   const types = place.types || [];
   if (types.includes("store")) score += 3;
   if (types.some((t) => ["spa", "physiotherapist", "doctor"].includes(t))) score -= 3;
@@ -213,7 +213,7 @@ async function searchPlaces(query) {
   return data.places || [];
 }
 
-//Runs several retail-targeted queries, dedupes, scores, and ranks likely sellers first
+
 async function findSellers(item, city) {
   const queries = [
     `${item} store in ${city}`,
