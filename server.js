@@ -80,7 +80,7 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
     try {
       await resend.emails.send({
         from: "Out There Exports <export@outthereexports.xyz>",
-        to: ["exportindia2026us@gmail.com"],
+        to: ["agaciazara765@gmail.com"],
         reply_to: event.data.from,
         subject: `Fwd: ${event.data.subject}`,
         html: email.html,
@@ -170,6 +170,109 @@ async function findBuyers(item, city) {
 }
 
 
+
+//retail search focus
+//Retail signals:
+const RETAIL_WORDS = ["store", "shop", "boutique", "market", "emporium", "imports",
+  "import", "trading", "gift", "gifts", "crystal", "crystals", "metaphysical",
+  "spiritual", "gems", "gemstone", "supply", "supplies", "distributor", "wholesale",
+  "warehouse", "co.", "company", "outfitters", "apothecary"];
+
+//Service signals:businesses that only use a few bowls
+const SERVICE_WORDS = ["therapy", "therapist", "healing center", "healing arts",
+  "sound healing", "spa", "massage", "clinic", "counseling", "counselling",
+  "reiki", "wellness center", "wellness centre", "studio", "retreat",
+  "acupuncture", "chiropractic", "meditation cent", "hypnosis", "school",
+  "institute", "sessions", "practitioner"];
+
+function scoreSeller(place) {
+  const name = (place.displayName?.text || "").toLowerCase();
+  let score = 0;
+  for (const w of RETAIL_WORDS) if (name.includes(w)) score += 2;
+  for (const w of SERVICE_WORDS) if (name.includes(w)) score -= 3;
+
+  //Google's own categorization: "store" type is a strong retail signal
+  const types = place.types || [];
+  if (types.includes("store")) score += 3;
+  if (types.some((t) => ["spa", "physiotherapist", "doctor"].includes(t))) score -= 3;
+
+  return score;
+}
+
+async function searchPlaces(query) {
+  const response = await fetch("https://places.googleapis.com/v1/places:searchText", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": process.env.GOOGLE_API_KEY,
+      "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.websiteUri,places.rating,places.types",
+    },
+    body: JSON.stringify({ textQuery: query, maxResultCount: 10 }),
+  });
+  const data = await response.json();
+  return data.places || [];
+}
+
+//Runs several retail-targeted queries, dedupes, scores, and ranks likely sellers first
+async function findSellers(item, city) {
+  const queries = [
+    `${item} store in ${city}`,
+    `${item} shop in ${city}`,
+    `metaphysical store in ${city}`,
+    `crystal shop in ${city}`,
+    `spiritual gifts store in ${city}`,
+    `yoga shop in ${city}`,
+  ];
+
+  const all = [];
+  for (const q of queries) {
+    try {
+      all.push(...(await searchPlaces(q)));
+    } catch (err) {
+      console.error("Places query failed:", q, err.message);
+    }
+  }
+
+  const unique = [...new Map(all.map((p) => [p.displayName?.text || p.websiteUri, p])).values()];
+
+  return unique
+    .map((p) => {
+      const score = scoreSeller(p);
+      const likelySeller = score >= 2;
+      return {
+        name: p.displayName?.text || "Unknown",
+        address: p.formattedAddress || "",
+        website: p.websiteUri || "",
+        rating: p.rating || null,
+        sellerScore: score,
+        likelySeller,
+        sellerTag: likelySeller ? "\u{1F6CD} Likely retailer" : "\u{1F9D8} Likely service provider",
+      };
+    })
+    .sort((a, b) => b.sellerScore - a.sellerScore);
+}
+
+app.get("/api/find-sellers", async (req, res) => {
+  const { item } = req.query;
+  const state = req.query.state || req.query.city;
+  if (!item || !state) return res.status(400).json({ error: "Missing item or state" });
+
+  try {
+    const cities = citiesByState[state] || [state];
+    let allSellers = [];
+    for (const city of cities.slice(0, 3)) { // cap Places API usage: 6 queries x 3 cities max
+      const sellers = await findSellers(item, `${city} ${state}`);
+      allSellers.push(...sellers);
+    }
+    const unique = [...new Map(allSellers.map((s) => [s.name, s])).values()]
+      .sort((a, b) => b.sellerScore - a.sellerScore);
+    res.json(unique);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/api/find-buyers", async (req, res) => {
   const { item } = req.query;
   const state = req.query.state || req.query.city;
@@ -225,15 +328,19 @@ We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan S
   <li>Sound Healing Bowls & Meditation Tools</li>
   <li>Tingsha Cymbals & Meditation Accessories</li>
   <li>Private Label & Custom Logo Manufacturing</li>
+  <li>Choose the Collection That Fits Your Business</li>
 </ul>
 
-<p><b>Why Our Bowls Fit Your Store</b></p>
+<p>✨ Premium Collection</p>
+<p>Individually handcrafted with superior finish and exceptional sound quality</p>
+
+<p><b>Why partner with us?</b></p>
 
 <ul>
   <li>Authentic handmade craftsmanship</li>
   <li>Ideal for meditation, yoga, sound healing and wellness retail</li>
   <li>OEM & Private Label options</li>
-  <li>Worldwide shipping with dedicated export support</li>
+  <li>Worldwide Shipping & Dedicated Export Support</li>
 </ul>
 
 <p>
@@ -282,7 +389,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
     await resend.emails.send({
       from: process.env.SENDER_EMAIL,
       to,
-      reply_to: "export@outthereexports.xyz",
+      reply_to: "agaciazara765@gmail.com",
       subject: `Wholesale Product Supply Opportunity`,
       html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category })
     });
@@ -347,8 +454,8 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
       await resend.emails.send({
         from: process.env.SENDER_EMAIL,
         to,
-        reply_to: "export@outthereexports.xyz",
-        subject: `Home decor wholesale inquiry — ${p.item}`,
+        reply_to: "agaciazara765@gmail.com",
+        subject: `Wholesale Product Supply Opportunity`,
         html: buildPitchEmail(p),
       });
       savePitch({
@@ -361,7 +468,7 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
         website: p.website,
         category: p.category,
         sellerName: p.sellerName,
-        subject: `Home decor wholesale inquiry — ${p.item}`,
+        subject: `Wholesale Product Supply Opportunity`,
         bulk: true,
       });
       alreadySent.add(emailKey);
