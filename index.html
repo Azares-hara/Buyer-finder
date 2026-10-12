@@ -38,7 +38,7 @@
         <div class="hero-details">
           <h2 class="title">Best Home Decor</h2>
           <h3 class="subtitle">Connect with boutiques, retailers &amp; design studios across the United States</h3>
-          <p class="description">Tell us what you make and where — we'll find real stores that could stock your items, so you can pitch them in one click.</p>
+          <p class="description">Tell us what you make and where, we'll find real stores that could stock your items, so you can pitch them in one click.</p>
           <div class="buttons">
             <a href="#find" class="button order-now">Find Buyers Now</a>
             <a href="#how" class="button contact-us">How It Works</a>
@@ -58,7 +58,7 @@
         </div>
         <div class="about-details">
           <h2 class="section-title">About Us</h2>
-          <p class="text">DecorFind connects wholesale buyers across the U.S. with home decor makers and small sellers. Using the Google Places API to find real boutiques, gift shops and interior studios that match your products so you pitch stores that might actually say yes instead of cold calling blindly. Find them. Get their contact. Pitch them. That's all.</p>
+          <p class="text">DecorFind connects wholesale buyers across the U.S. with home decor makers and small sellers to find real boutiques, gift shops and interior studios that match your products so you pitch stores that might actually say yes instead of cold calling blindly. We find them. Get their contact. Pitch them and done!</p>
           <div class="social-link-list">
             <a href="#" class="social-link"><i class="fa-brands fa-facebook"></i></a>
             <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
@@ -133,6 +133,9 @@
           <button class="button search-button" onclick="search()">
             <i class="fa-solid fa-magnifying-glass"></i> Find Buyers
           </button>
+          <button class="button search-button sellers-button" onclick="search(true)" title="Targets shops that sell products, ranked with likely retailers first">
+            <i class="fa-solid fa-store"></i> Find Retail Sellers
+          </button>
         </div>
 
         <p id="status" class="status-text"></p>
@@ -178,17 +181,17 @@
           <li class="step-item">
             <i class="fa-solid fa-magnifying-glass-location"></i>
             <h3 class="name">1. Search</h3>
-            <p class="text">Tell us your product and state. We search for thousands of US stores, boutiques and design studios via the Google Places API.</p>
+            <p class="text">Tell us your product and state. We search for thousands of US stores, boutiques and design studios.</p>
           </li>
           <li class="step-item">
             <i class="fa-solid fa-envelope-open-text"></i>
             <h3 class="name">2. Connect</h3>
-            <p class="text">Each buyer card shows their address, website and rating. Grab their contact email from their site and enter it in one click.</p>
+            <p class="text">Each buyer card shows their address, website and rating. We find their contact email from their site and enter it in one click.</p>
           </li>
           <li class="step-item">
             <i class="fa-solid fa-paper-plane"></i>
             <h3 class="name">3. Send a pitch</h3>
-            <p class="text">Hit "Send Pitch" and our email API delivers your wholesale inquiry straight to the buyer's inbox. Done.</p>
+            <p class="text">Hit "Send Pitch" and our email delivers your wholesale inquiry straight to the buyer's inbox. Done.</p>
           </li>
         </ul>
       </div>
