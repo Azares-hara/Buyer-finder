@@ -853,3 +853,24 @@ header .navbar {
   cursor: pointer;
   accent-color: #c0392b;
 }
+/* Retail-focused search */
+.sellers-button {
+  background: #6b3fa0;
+}
+.seller-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+  margin-top: 5px;
+}
+.seller-tag.retail {
+  background: #e7f6ec;
+  color: #1e7e42;
+}
+.seller-tag.service {
+  background: #fdf1e3;
+  color: #b06a00;
+}
+
