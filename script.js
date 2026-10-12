@@ -242,7 +242,7 @@ async function sendSelected() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Bulk send failed");
 
-    // Mark each card with its individual result
+    //Mark each card with its individual result
     data.results.forEach((r, k) => {
       const msg = document.getElementById(`msg-${idxs[k]}`);
       if (!msg) return;
