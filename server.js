@@ -310,8 +310,8 @@ Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
 <p>Dear ${buyerName || company} Team,</p>
 
 <p>
-We recently came across ${company} while researching businesses in ${country} that offer unique products and experiences to their customers.<br>
-After exploring your website (${website || "N/A"}), we were impressed by the quality of your offerings and your commitment to serving your community with carefully selected products and services.
+We recently came across ${company} while researching businesses that serve the wellness, massage, and holistic therapy community or the offering of unique products and experiences to their customers in the ${country}.<br>
+After exploring your website (${website || "N/A"}), we were impressed by your extensive range of products designed to support therapists, wellness practitioners, and their clients.
 </p>
 
 <p>
