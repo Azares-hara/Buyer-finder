@@ -307,10 +307,10 @@ function buildPitchEmail({
 <p><b>Authentic Handmade Himalayan Singing Bowls<br>
 Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
 
-<p>Hi ${buyerName || "Team"},</p>
+<p>Hello ${buyerName} "team",</p>
 
 <p>
-I came across ${company} while researching music and sound-related retailers in ${country} and thought our handmade Himalayan Singing Bowls could complement your existing offerings.
+I came across your website, ${company} while researching music and sound-related retailers in ${country} and thought that our handmade Himalayan Singing Bowls and related products could complement your existing offerings.
 </p>
 
 <p>
