@@ -304,8 +304,6 @@ function buildPitchEmail({
   category
 }) {
   return `
-<p><b>Authentic Handmade Himalayan Singing Bowls<br>
-Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
 
 <p>Hello ${buyerName} "team",</p>
 
