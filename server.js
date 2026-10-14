@@ -307,50 +307,26 @@ function buildPitchEmail({
 <p><b>Authentic Handmade Himalayan Singing Bowls<br>
 Direct Manufacturer from Nepal • Wholesale • OEM • Private Label</b></p>
 
-<p>Dear ${buyerName || company} Team,</p>
+<p>Hi ${buyerName || "Team"},</p>
 
 <p>
-We recently came across ${company} while researching businesses that serve the wellness, massage, and holistic therapy community or the offering of unique products and experiences to their customers in the ${country}.<br>
-After exploring your website (${website || "N/A"}), we were impressed by your extensive range of products designed to support therapists, wellness practitioners, and their clients.
+I came across ${company} while researching music and sound-related retailers in ${country} and thought our handmade Himalayan Singing Bowls could complement your existing offerings.
 </p>
 
 <p>
-We are a Nepal-based manufacturer and exporter of authentic handmade Himalayan Singing Bowls crafted by skilled artisans using traditional techniques.
-</p>
-
-<p>We offer a range of products:</p>
-
-<ul>
-  <li>Handmade Himalayan Singing Bowls</li>
-  <li>Full Moon Singing Bowls</li>
-  <li>Antique Finish Singing Bowls</li>
-  <li>Chakra Singing Bowl Sets</li>
-  <li>Sound Healing Bowls & Meditation Tools</li>
-  <li>Tingsha Cymbals & Meditation Accessories</li>
-  <li>Private Label & Custom Logo Manufacturing</li>
-  <li>Choose the Collection That Fits Your Business</li>
-</ul>
-
-<p>✨ Premium Collection</p>
-<p>Individually handcrafted with superior finish and exceptional sound quality</p>
-
-<p><b>Why partner with us?</b></p>
-
-<ul>
-  <li>Authentic handmade craftsmanship</li>
-  <li>Ideal for meditation, yoga, sound healing and wellness retail</li>
-  <li>OEM & Private Label options</li>
-  <li>Worldwide Shipping & Dedicated Export Support</li>
-</ul>
-
-<p>
-We believe our products would be a valuable addition to ${company}'s collection and resonate strongly with your customers.
+We manufacture and export singing bowls directly from Nepal, offering wholesale, OEM, and private-label options.
 </p>
 
 <p>
-We would be happy to share wholesale pricing, samples, and customization options.
+Many retailers work with us for authentic craftsmanship, reliable export support, and custom branding opportunities. Yoga studios, and sound-healing practitioners also source from us because they value authentic Nepal-made craftsmanship and private-label flexibility.
 </p>
 
+<p>
+Would you be interested in seeing our wholesale catalog and price list?
+</p>
+<p>
+You can view our product catalog and presentation here:
+</p>
 <p>
 <a href="https://drive.google.com/uc?export=download&id=15eZxHUjFMz0H-NrpRZWQkgScGRxqUGrR">
 Download Singing Bowl Poster (PDF)
@@ -368,10 +344,6 @@ Sales Executive<br>
 ${process.env.COMPANY_NAME}<br>
 📧 exportindia2026us@gmail.com<br>
 📱 ${process.env.SENDER_PHONE}
-</p>
-
-<p>
-Thank you for your valuable time. We look forward to building a successful and long-term partnership with ${company}.
 </p>
 `;
 }
