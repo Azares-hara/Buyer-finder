@@ -79,7 +79,7 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
 
     try {
       await resend.emails.send({
-        from: "Out There Exports <export@outthereexports.xyz>",
+        from: "Out There Exports <export@mail.outthereexports.xyz>",
         to: ["agaciazara765@gmail.com"],
         reply_to: event.data.from,
         subject: `Fwd: ${event.data.subject}`,
@@ -340,7 +340,7 @@ Kind Regards,<br>
 ${sellerName}<br>
 Sales Executive<br>
 ${process.env.COMPANY_NAME}<br>
-📧 exportindia2026us@gmail.com<br>
+📧 export@mail.outthereexports.xyz<br>
 📱 ${process.env.SENDER_PHONE}
 </p>
 `;
@@ -360,7 +360,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to,
       reply_to: "agaciazara765@gmail.com",
-      subject: `Wholesale Product Supply Opportunity`,
+      subject: `Product Supply Inquiry`,
       html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category })
     });
     savePitch({
@@ -425,7 +425,7 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
         from: process.env.SENDER_EMAIL,
         to,
         reply_to: "agaciazara765@gmail.com",
-        subject: `Wholesale Product Supply Opportunity`,
+        subject: `Product Supply Inquiry`,
         html: buildPitchEmail(p),
       });
       savePitch({
@@ -438,7 +438,7 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
         website: p.website,
         category: p.category,
         sellerName: p.sellerName,
-        subject: `Wholesale Product Supply Opportunity`,
+        subject: `Product Supply Inquiry`,
         bulk: true,
       });
       alreadySent.add(emailKey);
