@@ -260,7 +260,7 @@ app.get("/api/find-sellers", async (req, res) => {
   try {
     const cities = citiesByState[state] || [state];
     let allSellers = [];
-    for (const city of cities.slice(0, 3)) { // cap Places API usage: 6 queries x 3 cities max
+    for (const city of cities.slice(0, 3)) { 
       const sellers = await findSellers(item, `${city} ${state}`);
       allSellers.push(...sellers);
     }
@@ -304,44 +304,49 @@ function buildPitchEmail({
   category
 }) {
   return `
-
-<p>Hello ${buyerName} "team",</p>
+<p>Hello,</p>
 
 <p>
-I came across your website, ${company} while researching music and sound-related retailers in ${country} and thought that our handmade Himalayan Singing Bowls and related products could complement your existing offerings.
+I hope you're doing well.
 </p>
 
 <p>
-We manufacture and export singing bowls directly from Nepal, offering wholesale, OEM, and private-label options.
+I'm reaching out on behalf of OM Enterprise. We specialize in handcrafted Himalayan Singing Bowls sourced from Nepal.
 </p>
 
 <p>
-Many retailers work with us for authentic craftsmanship, reliable export support, and custom branding opportunities. Yoga studios, and sound-healing practitioners also source from us because they value authentic Nepal-made craftsmanship and private-label flexibility.
+Our singing bowls are popular with wellness stores, gift shops, spiritual retailers, and home décor businesses looking for authentic handcrafted products.
 </p>
 
 <p>
-Would you be interested in seeing our wholesale catalog and price list?
+We provide wholesale supply and would be happy to share our catalog and pricing for your review.
 </p>
+
 <p>
-You can view our product catalog and presentation here:
+Would you be interested in exploring a potential wholesale partnership?
 </p>
+
 <p>
-<a href="https://drive.google.com/uc?export=download&id=15eZxHUjFMz0H-NrpRZWQkgScGRxqUGrR">
+Looking forward to hearing from you.
+</p>
+
+<p>
+Best regards,<br>
+Agatha Swett<br>
+OM Enterprise<br>
+📧 export@mail.outthereexports.xyz<br>
+🌐 https://outthereexports.xyz
+</p>
+
+<p>
+
+<a href="https://drive.google.com/uc?export=download&id=1ibFi06c2ac_MzrINX10quhgw-Gw7aNdi">
 Download Singing Bowl Poster (PDF)
 </a>
 <br><br>
 <a href="https://drive.google.com/uc?export=download&id=1pGJ-LaV5smg1ePTLSHDRbsWuX0KqXmyY">
-Download Singing Bowl Presentation (PDF)
+Download Product Catalog (PDF)
 </a>
-</p>
-
-<p>
-Kind Regards,<br>
-${sellerName}<br>
-Sales Executive<br>
-${process.env.COMPANY_NAME}<br>
-📧 export@mail.outthereexports.xyz<br>
-📱 ${process.env.SENDER_PHONE}
 </p>
 `;
 }
@@ -360,7 +365,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to,
       reply_to: "agaciazara765@gmail.com",
-      subject: `Product Supply Inquiry`,
+      subject: `Handcrafted Singing Bowls – Wholesale Opportunity`,
       html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category })
     });
     savePitch({
@@ -373,7 +378,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
   website,
   category,
   sellerName,
-  subject: `Wholesale Product Supply Opportunity`
+  subject: `Handcrafted Singing Bowls – Wholesale Opportunity`
 });
     pitchesSent++;
     res.json({ success: true });
@@ -425,7 +430,7 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
         from: process.env.SENDER_EMAIL,
         to,
         reply_to: "agaciazara765@gmail.com",
-        subject: `Product Supply Inquiry`,
+        subject: `Handcrafted Singing Bowls – Wholesale Opportunity`,
         html: buildPitchEmail(p),
       });
       savePitch({
@@ -438,7 +443,7 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
         website: p.website,
         category: p.category,
         sellerName: p.sellerName,
-        subject: `Product Supply Inquiry`,
+        subject: `Handcrafted Singing Bowls – Wholesale Opportunity`,
         bulk: true,
       });
       alreadySent.add(emailKey);
