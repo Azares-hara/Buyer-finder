@@ -334,16 +334,19 @@ Best regards,<br>
 Agatha Swett<br>
 OM Enterprise<br>
 📧 Sales Contact: exportindia2026us@gmail.com<br>
-🌐 https://outthereexports.xyz
+🌐 <a href="https://outthereexports.xyz">
+https://outthereexports.xyz
+</a>
+</p>
 
 <p>
-<a href="https://buyer-finder-pyoa.onrender.com/homeint/Poster.jpeg">
+<a href="https://catalog.outthereexports.xyz/homeint/Poster.jpeg">
 View Singing Bowl Poster
 </a>
 
 <br><br>
 
-<a href="https://buyer-finder-pyoa.onrender.com/homeint/Singing%20bowl%20ppt.pdf">
+<a href="https://catalog.outthereexports.xyz/homeint/Singing%20bowl%20ppt.pdf">
 Download Product Catalog (PDF)
 </a>
 </p>
