@@ -333,13 +333,8 @@ Looking forward to hearing from you.
 Best regards,<br>
 Agatha Swett<br>
 OM Enterprise<br>
-📧 Sender: export@mail.outthereexports.xyz<br>
-📧 Sales Contact:
-<a href="mailto:exportindia2026us@gmail.com">
-exportindia2026us@gmail.com
-</a><br>
-🌐 <a href="https://outthereexports.xyz">outthereexports.xyz</a>
-</p>
+📧 Sales Contact: exportindia2026us@gmail.com<br>
+🌐 https://outthereexports.xyz
 
 <p>
 <a href="https://buyer-finder-pyoa.onrender.com/homeint/Poster.jpeg">
