@@ -340,14 +340,8 @@ https://outthereexports.xyz
 </p>
 
 <p>
-<a href="https://catalog.outthereexports.xyz/homeint/Poster.jpeg">
-View Singing Bowl Poster
-</a>
-
-<br><br>
-
-<a href="https://catalog.outthereexports.xyz/homeint/Singing%20bowl%20ppt.pdf">
-Download Product Catalog (PDF)
+<a href="https://catalog.outthereexports.xyz/homeint/Catalog.pdf">
+View Product Catalog (PDF)
 </a>
 </p>
 `;
