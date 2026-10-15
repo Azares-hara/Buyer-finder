@@ -329,22 +329,26 @@ Would you be interested in exploring a potential wholesale partnership?
 <p>
 Looking forward to hearing from you.
 </p>
-
 <p>
 Best regards,<br>
 Agatha Swett<br>
 OM Enterprise<br>
-📧 export@mail.outthereexports.xyz<br>
-🌐 https://outthereexports.xyz
+📧 Sender: export@mail.outthereexports.xyz<br>
+📧 Sales Contact:
+<a href="mailto:exportindia2026us@gmail.com">
+exportindia2026us@gmail.com
+</a><br>
+🌐 <a href="https://outthereexports.xyz">outthereexports.xyz</a>
 </p>
 
 <p>
-
-<a href="https://drive.google.com/uc?export=download&id=1ibFi06c2ac_MzrINX10quhgw-Gw7aNdi">
-Download Singing Bowl Poster (PDF)
+<a href="https://buyer-finder-pyoa.onrender.com/homeint/Poster.jpeg">
+View Singing Bowl Poster
 </a>
+
 <br><br>
-<a href="https://drive.google.com/uc?export=download&id=1pGJ-LaV5smg1ePTLSHDRbsWuX0KqXmyY">
+
+<a href="https://buyer-finder-pyoa.onrender.com/homeint/Singing%20bowl%20ppt.pdf">
 Download Product Catalog (PDF)
 </a>
 </p>
