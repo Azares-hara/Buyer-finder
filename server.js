@@ -101,6 +101,8 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
         headers: {
           "In-Reply-To": event.data.message_id,
           "References": event.data.message_id,
+          "List-Unsubscribe": `<https://outthereexports.xyz/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:unsubscribe@outthereexports.xyz>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         },
       });
     } catch (err) {
@@ -428,9 +430,28 @@ return res.status(401).json({ error: "Unauthorized" });
 res.json(loadPitches());
 });
 
+//One-click unsubscribe 
+app.post("/unsubscribe", express.urlencoded({ extended: false }), (req, res) => {
+  const email = req.body.List_Unsubscribe.replace(/^mailto:/, "");
+ 
+  fs.appendFileSync("./unsubscribed.txt", email.toLowerCase() + "\n");
+  res.status(200).send("Unsubscribed");
+});
+
+//Browser fallback 
+app.get("/unsubscribe", (req, res) => {
+  const email = (req.query.email || "").toLowerCase();
+  fs.appendFileSync("./unsubscribed.txt", email + "\n");
+  res.send("You've been unsubscribed. Sorry to see you go!");
+});
+
 
 //Bulk send
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+headers: {
+  "List-Unsubscribe": `<https://outthereexports.xyz/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:unsubscribe@outthereexports.xyz>`,
+  "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+},
 
 app.post("/api/send-email-bulk", express.json(), async (req, res) => {
   const { pitches } = req.body;
