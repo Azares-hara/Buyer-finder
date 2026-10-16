@@ -26,7 +26,19 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 let events = [];
 let replies = [];
-let pitchesSent = 0; 
+let pitchesSent = 0;
+
+const DAILY_SEND_LIMIT = Number(process.env.DAILY_SEND_LIMIT || 25);
+const PITCH_SUBJECT = "Handcrafted Singing Bowls \u2013 Wholesale Opportunity";
+
+function sentToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  return loadPitches().filter((p) => (p.sentAt || "").slice(0, 10) === today).length;
+}
+
+function dailyLimitRemaining() {
+  return Math.max(0, DAILY_SEND_LIMIT - sentToday());
+}
 
 app.use(express.json());
 
@@ -334,7 +346,6 @@ Best regards,<br>
 Agatha Swett<br>
 OM Enterprise<br>
 📧 Sales Contact: exportindia2026us@gmail.com<br>
-</a>
 </p>
 
 <p>
@@ -347,11 +358,37 @@ View Product Catalog (PDF)
 
 
 
+function buildPitchText() {
+  return [
+    "Hello,",
+    "",
+    "I'm reaching out on behalf of OM Enterprise. We specialize in handcrafted Himalayan Singing Bowls sourced from Nepal.",
+    "",
+    "Our singing bowls are popular with wellness stores, gift shops, spiritual retailers, and home décor businesses looking for authentic handcrafted products.",
+    "",
+    "We provide wholesale supply and would be happy to share our catalog and pricing for your review.",
+    "",
+    "Would you be interested in exploring a potential wholesale partnership?",
+    "",
+    "Best regards,",
+    "Agatha Swett",
+    "OM Enterprise",
+    "Sales Contact: exportindia2026us@gmail.com",
+    "",
+    "Product Catalog: https://catalog.outthereexports.xyz/homeint/Catalog.pdf",
+  ].join("\n");
+}
+
 app.post("/api/send-email", express.json(), async (req, res) => {
   const { to, buyerName, sellerName, item, country, company, website, category } = req.body;
 
   if (!to || !to.includes("@")) {
     return res.status(400).json({ error: "Valid buyer email required" });
+  }
+  if (dailyLimitRemaining() <= 0) {
+    return res.status(429).json({
+      error: `Daily warmup limit reached (${DAILY_SEND_LIMIT}/day). Try again tomorrow.`,
+    });
   }
 
   try {
@@ -359,8 +396,9 @@ app.post("/api/send-email", express.json(), async (req, res) => {
       from: process.env.SENDER_EMAIL,
       to,
       reply_to: "agaciazara765@gmail.com",
-      subject: `Handcrafted Singing Bowls – Wholesale Opportunity`,
-      html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category })
+      subject: PITCH_SUBJECT,
+      html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category }),
+      text: buildPitchText(),
     });
     savePitch({
   sentAt: new Date().toISOString(),
@@ -372,7 +410,7 @@ app.post("/api/send-email", express.json(), async (req, res) => {
   website,
   category,
   sellerName,
-  subject: `Handcrafted Singing Bowls – Wholesale Opportunity`
+  subject: PITCH_SUBJECT,
 });
     pitchesSent++;
     res.json({ success: true });
@@ -403,8 +441,16 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
     return res.status(400).json({ error: "Max 100 emails per bulk send (Resend daily limit)" });
   }
 
+  const remaining = dailyLimitRemaining();
+  if (remaining <= 0) {
+    return res.status(429).json({
+      error: `Daily warmup limit reached (${DAILY_SEND_LIMIT}/day). Try again tomorrow.`,
+    });
+  }
+
   const alreadySent = new Set(loadPitches().map((p) => (p.email || "").toLowerCase()));
   const results = [];
+  let sentThisBatch = 0;
 
   for (const p of pitches) {
     const to = (p.to || "").trim();
@@ -418,14 +464,19 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
       results.push({ status: "skipped", error: "Already pitched" });
       continue;
     }
+    if (sentThisBatch >= remaining) {
+      results.push({ status: "skipped", error: "Daily warmup limit reached" });
+      continue;
+    }
 
     try {
       await resend.emails.send({
         from: process.env.SENDER_EMAIL,
         to,
         reply_to: "agaciazara765@gmail.com",
-        subject: `Handcrafted Singing Bowls – Wholesale Opportunity`,
+        subject: PITCH_SUBJECT,
         html: buildPitchEmail(p),
+        text: buildPitchText(),
       });
       savePitch({
         sentAt: new Date().toISOString(),
@@ -437,11 +488,12 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
         website: p.website,
         category: p.category,
         sellerName: p.sellerName,
-        subject: `Handcrafted Singing Bowls – Wholesale Opportunity`,
+        subject: PITCH_SUBJECT,
         bulk: true,
       });
       alreadySent.add(emailKey);
       pitchesSent++;
+      sentThisBatch++;
       results.push({ status: "sent" });
     } catch (err) {
       console.error("Bulk send failed for", to, err);
