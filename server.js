@@ -2,6 +2,26 @@
 const fs = require("fs");
 const PITCHES_FILE = "./pitches.json";
 
+const UNSUB_FILE = "./unsubscribed.txt";
+
+function loadUnsubscribed() {
+  if (!fs.existsSync(UNSUB_FILE)) {
+    return new Set();
+  }
+
+  return new Set(
+    fs
+      .readFileSync(UNSUB_FILE, "utf8")
+      .split("\n")
+      .map(email => email.trim().toLowerCase())
+      .filter(Boolean)
+  );
+}
+
+function isUnsubscribed(email) {
+  return loadUnsubscribed().has(email.toLowerCase());
+}
+
 function loadPitches() {
   try {
     return JSON.parse(fs.readFileSync(PITCHES_FILE, "utf8"));
@@ -9,6 +29,7 @@ function loadPitches() {
     return [];
   }
 }
+
 
 function savePitch(pitch) {
   const pitches = loadPitches();
@@ -24,9 +45,38 @@ const { Resend } = require("resend");
 const app = express();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+//unsubscribe
+app.post("/unsubscribe", express.urlencoded({ extended: false }), (req, res) => {
+  const email = (req.body.List_Unsubscribe || "")
+    .replace(/^mailto:/, "")
+    .trim()
+    .toLowerCase();
+
+  if (email) {
+    fs.appendFileSync(UNSUB_FILE, email + "\n");
+  }
+
+  res.status(200).send("Unsubscribed");
+});
+
+//Browser fallback
+app.get("/unsubscribe", (req, res) => {
+  const email = (req.query.email || "")
+    .trim()
+    .toLowerCase();
+
+  if (email) {
+    fs.appendFileSync(UNSUB_FILE, email + "\n");
+  }
+
+  res.send("You've been unsubscribed. Sorry to see you go!");
+});
+
 let events = [];
 let replies = [];
 let pitchesSent = 0;
+
+
 
 const DAILY_SEND_LIMIT = Number(process.env.DAILY_SEND_LIMIT || 25);
 const PITCH_SUBJECT = "Handcrafted Singing Bowls \u2013 Wholesale Opportunity";
@@ -101,8 +151,6 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
         headers: {
           "In-Reply-To": event.data.message_id,
           "References": event.data.message_id,
-          "List-Unsubscribe": `<https://outthereexports.xyz/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:unsubscribe@outthereexports.xyz>`,
-          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         },
       });
     } catch (err) {
@@ -387,6 +435,11 @@ app.post("/api/send-email", express.json(), async (req, res) => {
   if (!to || !to.includes("@")) {
     return res.status(400).json({ error: "Valid buyer email required" });
   }
+  if (isUnsubscribed(to)) {
+    return res.status(400).json({
+      error: "Unsubscribed contact"
+    });
+  }
   if (dailyLimitRemaining() <= 0) {
     return res.status(429).json({
       error: `Daily warmup limit reached (${DAILY_SEND_LIMIT}/day). Try again tomorrow.`,
@@ -401,6 +454,13 @@ app.post("/api/send-email", express.json(), async (req, res) => {
       subject: PITCH_SUBJECT,
       html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category }),
       text: buildPitchText(),
+      headers: {
+        "List-Unsubscribe":
+        `<https://outthereexports.xyz/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:unsubscribe@outthereexports.xyz>`,
+        "List-Unsubscribe-Post":
+        "List-Unsubscribe=One-Click"
+      }
+
     });
     savePitch({
   sentAt: new Date().toISOString(),
@@ -430,28 +490,9 @@ return res.status(401).json({ error: "Unauthorized" });
 res.json(loadPitches());
 });
 
-//One-click unsubscribe 
-app.post("/unsubscribe", express.urlencoded({ extended: false }), (req, res) => {
-  const email = req.body.List_Unsubscribe.replace(/^mailto:/, "");
- 
-  fs.appendFileSync("./unsubscribed.txt", email.toLowerCase() + "\n");
-  res.status(200).send("Unsubscribed");
-});
-
-//Browser fallback 
-app.get("/unsubscribe", (req, res) => {
-  const email = (req.query.email || "").toLowerCase();
-  fs.appendFileSync("./unsubscribed.txt", email + "\n");
-  res.send("You've been unsubscribed. Sorry to see you go!");
-});
-
 
 //Bulk send
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-headers: {
-  "List-Unsubscribe": `<https://outthereexports.xyz/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:unsubscribe@outthereexports.xyz>`,
-  "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-},
 
 app.post("/api/send-email-bulk", express.json(), async (req, res) => {
   const { pitches } = req.body;
@@ -465,17 +506,26 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
   const remaining = dailyLimitRemaining();
   if (remaining <= 0) {
     return res.status(429).json({
-      error: `Daily warmup limit reached (${DAILY_SEND_LIMIT}/day). Try again tomorrow.`,
+      error: `Limit reached (${DAILY_SEND_LIMIT}/day). Try again tomorrow.`,
     });
   }
 
   const alreadySent = new Set(loadPitches().map((p) => (p.email || "").toLowerCase()));
+  const unsubscribed = loadUnsubscribed();
   const results = [];
   let sentThisBatch = 0;
+  
 
   for (const p of pitches) {
     const to = (p.to || "").trim();
     const emailKey = to.toLowerCase();
+    if (unsubscribed.has(emailKey)) {
+      results.push({
+        status: "skipped",
+        error: "Unsubscribed"
+      });
+      continue;
+    }
 
     if (!to.includes("@")) {
       results.push({ status: "failed", error: "Invalid email" });
@@ -498,6 +548,12 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
         subject: PITCH_SUBJECT,
         html: buildPitchEmail(p),
         text: buildPitchText(),
+        headers: {
+          "List-Unsubscribe":
+          `<https://outthereexports.xyz/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:unsubscribe@outthereexports.xyz>`,
+          "List-Unsubscribe-Post":
+          "List-Unsubscribe=One-Click"
+        }
       });
       savePitch({
         sentAt: new Date().toISOString(),
