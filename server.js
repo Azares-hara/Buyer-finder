@@ -74,10 +74,6 @@ app.get("/unsubscribe", (req, res) => {
 
 let events = [];
 let replies = [];
-//let pitchesSent = 0;
-
-
-
 const DAILY_SEND_LIMIT = Number(process.env.DAILY_SEND_LIMIT || 25);
 const PITCH_SUBJECT = "Handcrafted Singing Bowls \u2013 Wholesale Opportunity";
 
@@ -230,8 +226,51 @@ async function findBuyers(item, city) {
     rating: p.rating || null,
   }));
 }
+//Hunter.io API 
+function extractDomain(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+}
 
+async function findEmailsWithHunter(domain) {
+  const response = await fetch(
+    `https://api.hunter.io/v2/domain-search?domain=${encodeURIComponent(domain)}&api_key=${process.env.HUNTER_API_KEY}`
+  );
+  const data = await response.json();
+  if (data.errors && data.errors.length) {
+    throw new Error(data.errors.map((e) => e.details || e.id).join(", "));
+  }
+  return data;
+}
 
+app.get("/api/find-email", async (req, res) => {
+  const { website } = req.query;
+
+  if (!website) {
+    return res.status(400).json({
+      error: "Website required"
+    });
+  }
+
+  try {
+    const domain = extractDomain(website);
+    if (!domain) {
+      return res.status(400).json({ error: "Could not extract a domain from that website" });
+    }
+
+    const data = await findEmailsWithHunter(domain);
+
+    res.json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      error: err.message
+    });
+  }
+});
 
 //retail search focus
 //Retail signals:
@@ -412,13 +451,13 @@ function buildPitchText() {
   return [
     "Hello,",
     "",
-    "I'm reaching out on behalf of OM Enterprise. We specialize in handcrafted Himalayan Singing Bowls sourced from Nepal.",
+    "I’m reaching out on behalf of OM Enterprise, where we specialize in handcrafted home décor and gifting products, including our *singing bowl collection*.",
     "",
-    "Our singing bowls are popular with wellness stores, gift shops, spiritual retailers, and home décor businesses looking for authentic handcrafted products.",
+    "Our singing bowls are designed to bring a sense of harmony, relaxation, and tranquility to any space, making them a unique addition to wellness stores, gift shops, and home décor collections.",
     "",
-    "We provide wholesale supply and would be happy to share our catalog and pricing for your review.",
+    "We would love to explore the possibility of working with your business and would be happy to share our singing bowl collection for your review.",
     "",
-    "Would you be interested in exploring a potential wholesale partnership?",
+    "Would you be interested in exploring potential wholesale opportunities with us?",
     "",
     "Best regards,",
     "Agatha Swett",
@@ -485,9 +524,11 @@ app.post("/api/send-email", express.json(), async (req, res) => {
 });
 
 app.get("/api/pitches", (req, res) => {
+  if (req.headers["x-dashboard-token"] !== process.env.DASHBOARD_TOKEN) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
 
- 
-res.json(loadPitches());
+  res.json(loadPitches());
 });
 
 
