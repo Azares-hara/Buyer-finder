@@ -443,7 +443,7 @@ View products (JPEG)
 </a>
 <p>
 <a href="https://catalog.outthereexports.xyz/homeint/poster2.jpeg">
-View more products (JPEG)
+View Offer Poster (JPEG)
 </a>
 </p>
 `;
@@ -468,8 +468,8 @@ function buildPitchText() {
     "OM Enterprise",
     "Sales Contact: exportindia2026us@gmail.com",
     "",
-    "Product Catalog 1: https://catalog.outthereexports.xyz/homeint/poster1.jpeg",
-    "Product Catalog 2: https://catalog.outthereexports.xyz/homeint/poster2.jpeg",
+    "Product Catalog : https://catalog.outthereexports.xyz/homeint/poster1.jpeg",
+    "Offer Poster : https://catalog.outthereexports.xyz/homeint/poster2.jpeg",
   ].join("\n");
 }
 
