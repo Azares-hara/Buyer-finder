@@ -86,6 +86,11 @@ async function search() {
     status.textContent = "Something went wrong. Is the server running?";
   }
 }
+const res = await fetch(
+  `/api/find-email?website=${encodeURIComponent(buyer.website)}`
+);
+
+const data = await res.json();
 
 function render() {
   // Bulk-send bar injected once, above the results
