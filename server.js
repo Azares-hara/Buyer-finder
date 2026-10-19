@@ -74,7 +74,7 @@ app.get("/unsubscribe", (req, res) => {
 
 let events = [];
 let replies = [];
-const DAILY_SEND_LIMIT = Number(process.env.DAILY_SEND_LIMIT || 25);
+const DAILY_SEND_LIMIT = Number(process.env.DAILY_SEND_LIMIT || 75);
 const PITCH_SUBJECT = "Handcrafted Singing Bowls \u2013 Wholesale Opportunity";
 
 function sentToday() {
