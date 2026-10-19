@@ -20,6 +20,8 @@ const citiesByState = {
   "New York": ["New York City", "Buffalo", "Rochester", "Albany", "Yonkers"],
   Texas: ["Austin", "Houston", "Dallas", "San Antonio", "Fort Worth"],
   Washington: ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue"]
+  Texas: ["Austin", "Houston", "Dallas", "San Antonio", "Fort Worth"],
+  Washington: ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue"]
 };
 Object.values(citiesByState).forEach(cities => {
 cities.sort((a, b) => a.localeCompare(b));
@@ -134,7 +136,7 @@ async function sendEmail(i) {
   }
 
   const company = buyers[i].name;
-  const country = buyers[i].address.split(",").pop().trim();
+  const country = (buyers[i].address || "").split(",").pop().trim()
   const website = buyers[i].website || "";
   const category = item;
 
@@ -143,9 +145,12 @@ async function sendEmail(i) {
   msg.textContent = "Sending...";
 
   try {
-    const res = await fetch("https://buyer-finder-pyoa.onrender.com/api/send-email", {
+    const res = await fetch("/api/send-email", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        
+      },
       body: JSON.stringify({
         to,
         buyerName: buyers[i].name,
@@ -233,9 +238,9 @@ async function sendSelected() {
   bulkMsg.textContent = `Sending 0 of ${idxs.length}...`;
 
   try {
-    const res = await fetch("https://buyer-finder-pyoa.onrender.com/api/send-email-bulk", {
+    const res = await fetch("api/send-email-bulk", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json"},
       body: JSON.stringify({ pitches: idxs.map(buildPayload) }),
     });
 
