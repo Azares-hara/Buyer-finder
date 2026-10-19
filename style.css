@@ -497,6 +497,11 @@ header .navbar {
   min-height: 16px;
   margin-top: -6px;
 }
+.send-btn.ghost { 
+  background: transparent; 
+  border: 1px solid #ccc; 
+  color: inherit; 
+}
 
 .buyer-grid .buyer .msg.ok { color: #2e7d32; }
 .buyer-grid .buyer .msg.err { color: #c0392b; }
