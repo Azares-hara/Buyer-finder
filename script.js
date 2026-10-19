@@ -10,6 +10,9 @@ document.querySelectorAll(".nav-menu .nav-link").forEach((link) => {
 //Buyer search and email
 let buyers = [];
 
+
+const DASHBOARD_TOKEN = "DASHBOARD_TOKEN";
+
 //city dropdown
 const citiesByState = {
   Alabama: ["Birmingham", "Montgomery", "Mobile", "Huntsville", "Tuscaloosa"],
@@ -20,8 +23,7 @@ const citiesByState = {
   "New York": ["New York City", "Buffalo", "Rochester", "Albany", "Yonkers"],
   Texas: ["Austin", "Houston", "Dallas", "San Antonio", "Fort Worth"],
   Washington: ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue"]
-  Texas: ["Austin", "Houston", "Dallas", "San Antonio", "Fort Worth"],
-  Washington: ["Seattle", "Spokane", "Tacoma", "Vancouver", "Bellevue"]
+ 
 };
 Object.values(citiesByState).forEach(cities => {
 cities.sort((a, b) => a.localeCompare(b));
@@ -86,12 +88,6 @@ async function search() {
     status.textContent = "Something went wrong. Is the server running?";
   }
 }
-const res = await fetch(
-  `/api/find-email?website=${encodeURIComponent(buyer.website)}`
-);
-
-const data = await res.json();
-
 function render() {
   // Bulk-send bar injected once, above the results
   document.getElementById("results").innerHTML =
@@ -120,6 +116,7 @@ function render() {
         <div class="email-row">
           <input id="email-${i}" type="email" placeholder="Buyer email (from their site)" value="${b.email || ""}" oninput="buyers[${i}].email = this.value.trim()" />
           <button class="send-btn" id="btn-${i}" onclick="sendEmail(${i})">Send Pitch</button>
+          ${b.website ? `<button class="send-btn ghost" id="find-${i}" onclick="findEmail(${i})">Find Email</button>` : ""}
         </div>
         <p class="msg" id="msg-${i}"></p>
       </div>`
@@ -185,7 +182,50 @@ async function sendEmail(i) {
 }
 
 
-// -- Bulk sending --
+//Hunter.io lookup
+async function findEmail(i) {
+  const b = buyers[i];
+  const msg = document.getElementById(`msg-${i}`);
+  const btn = document.getElementById(`find-${i}`);
+
+  if (!b.website) {
+    msg.className = "msg err";
+    msg.textContent = "No website on file for this buyer.";
+    return;
+  }
+
+  btn.disabled = true;
+  msg.className = "msg";
+  msg.textContent = "Looking up email via Hunter...";
+
+  try {
+    const res = await fetch(`/api/find-email?website=${encodeURIComponent(b.website)}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Lookup failed");
+
+    const emails = (data.data && data.data.emails) || [];
+    if (!emails.length) {
+      msg.className = "msg err";
+      msg.textContent = "No public email found for this domain.";
+      return;
+    }
+
+    const best = emails.slice().sort((a, c) => (c.confidence || 0) - (a.confidence || 0))[0];
+    const input = document.getElementById(`email-${i}`);
+    input.value = best.value;
+    b.email = best.value;
+
+    msg.className = "msg ok";
+    msg.textContent = `Found ${best.value}${best.confidence != null ? " (" + best.confidence + "% confident)" : ""}.`;
+  } catch (err) {
+    msg.className = "msg err";
+    msg.textContent = err.message || "Lookup failed — enter the email manually.";
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+//Bulk sending 
 function selectedIndexes() {
   return buyers
     .map((b, i) => (document.getElementById(`pick-${i}`)?.checked ? i : -1))
@@ -230,7 +270,7 @@ async function sendSelected() {
     return;
   }
 
-  // Validate emails up front
+  //Validate emails
   const bad = idxs.filter((i) => !buildPayload(i).to.includes("@"));
   if (bad.length) {
     bulkMsg.className = "msg err";
@@ -243,9 +283,12 @@ async function sendSelected() {
   bulkMsg.textContent = `Sending 0 of ${idxs.length}...`;
 
   try {
-    const res = await fetch("api/send-email-bulk", {
+    const res = await fetch("/api/send-email-bulk", {
       method: "POST",
-      headers: { "Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "x-dashboard-token": DASHBOARD_TOKEN,
+      },
       body: JSON.stringify({ pitches: idxs.map(buildPayload) }),
     });
 
