@@ -412,19 +412,19 @@ I hope you're doing well.
 </p>
 
 <p>
-I'm reaching out on behalf of OM Enterprise. We specialize in handcrafted Himalayan Singing Bowls sourced from Nepal.
+I’m reaching out on behalf of OM Enterprise, where we specialize in handcrafted home décor and gifting products, including our *singing bowl collection*.
 </p>
 
 <p>
-Our singing bowls are popular with wellness stores, gift shops, spiritual retailers, and home décor businesses looking for authentic handcrafted products.
+Our singing bowls are designed to bring a sense of harmony, relaxation, and tranquility to any space, making them a unique addition to wellness stores, gift shops, and home décor collections.
 </p>
 
 <p>
-We provide wholesale supply and would be happy to share our catalog and pricing for your review.
+We would love to explore the possibility of working with your business and would be happy to share our singing bowl collection for your review.
 </p>
 
 <p>
-Would you be interested in exploring a potential wholesale partnership?
+Would you be interested in exploring potential wholesale opportunities with us?
 </p>
 
 <p>
@@ -455,6 +455,8 @@ function buildPitchText() {
   return [
     "Hello,",
     "",
+    "I hope you're doing well.",
+    "",
     "I’m reaching out on behalf of OM Enterprise, where we specialize in handcrafted home décor and gifting products, including our *singing bowl collection*.",
     "",
     "Our singing bowls are designed to bring a sense of harmony, relaxation, and tranquility to any space, making them a unique addition to wellness stores, gift shops, and home décor collections.",
@@ -462,6 +464,8 @@ function buildPitchText() {
     "We would love to explore the possibility of working with your business and would be happy to share our singing bowl collection for your review.",
     "",
     "Would you be interested in exploring potential wholesale opportunities with us?",
+    "",
+    "Looking forward to hearing from you",
     "",
     "Best regards,",
     "Agatha Swett",
