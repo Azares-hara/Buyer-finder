@@ -235,6 +235,15 @@ function extractDomain(url) {
   }
 }
 
+//extract emails
+function extractEmails(text) {
+  const matches = text.match(
+    /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
+  );
+
+  return [...new Set(matches || [])];
+}
+
 async function findEmailsWithHunter(domain) {
   const response = await fetch(
     `https://api.hunter.io/v2/domain-search?domain=${encodeURIComponent(domain)}&api_key=${process.env.HUNTER_API_KEY}`
@@ -245,6 +254,58 @@ async function findEmailsWithHunter(domain) {
   }
   return data;
 }
+
+async function findEmailsFromWebsite(website) {
+  const foundEmails = new Set();
+
+  const urlsToTry = [
+    website,
+    website.replace(/\/$/, "") + "/contact",
+    website.replace(/\/$/, "") + "/contact-us",
+    website.replace(/\/$/, "") + "/about",
+    website.replace(/\/$/, "") + "/about-us",
+    website.replace(/\/$/, "") + "/pages/contact",
+    website.replace(/\/$/, "") + "/get-in-touch",
+    website.replace(/\/$/, "") + "/contact-us/",
+    website.replace(/\/$/, "") + "/contact/",
+    website.replace(/\/$/, "") + "/pages/contact-us",
+  ];
+
+  for (const url of urlsToTry) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "User-Agent": "Mozilla/5.0"
+        }
+      });
+
+      if (!response.ok) continue;
+
+      const html = await response.text();
+
+      const emails = extractEmails(html);
+
+      emails.forEach(email => {
+        const lower = email.toLowerCase();
+
+        if (
+          !lower.endsWith(".png") &&
+          !lower.endsWith(".jpg") &&
+          !lower.includes("example.com")
+          ) {
+            foundEmails.add(email);
+            }
+      });
+
+    } catch (err) {
+      console.log("Website scan failed:", url);
+    }
+  }
+
+  return [...foundEmails];
+}
+
+
 
 app.get("/api/find-email", async (req, res) => {
   const { website } = req.query;
@@ -257,20 +318,61 @@ app.get("/api/find-email", async (req, res) => {
 
   try {
     const domain = extractDomain(website);
+
     if (!domain) {
-      return res.status(400).json({ error: "Could not extract a domain from that website" });
+      return res.status(400).json({
+        error: "Could not extract domain"
+      });
+    }
+    
+
+    // WEBSITE SCAN
+    const websiteEmails =
+      await findEmailsFromWebsite(website);
+
+    if (websiteEmails.length > 0) {
+      return res.json({
+        source: "website",
+        data: {
+          emails: websiteEmails.map(email => ({
+            value: email,
+            confidence: 95
+          }))
+        }
+      });
     }
 
-    const data = await findEmailsWithHunter(domain);
 
-    res.json(data);
+    try {
+      const hunterData =
+        await findEmailsWithHunter(domain);
+
+      return res.json({
+        source: "hunter",
+        data: hunterData.data
+      });
+
+    } catch (err) {
+      console.log(
+        "Hunter failed:",
+        err.message
+      );
+    }
+
+    return res.status(404).json({
+      error: "No email found"
+    });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({
+
+    return res.status(500).json({
       error: err.message
     });
   }
 });
+
+
 
 //retail search focus
 //Retail signals:
