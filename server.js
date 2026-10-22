@@ -510,19 +510,11 @@ function buildPitchEmail({
 <p>Hello,</p>
 
 <p>
-I hope you're doing well.
+I'm with OM Enterprise, a supplier of handcrafted singing bowls and home décor products.
 </p>
 
 <p>
-I’m reaching out on behalf of OM Enterprise, where we specialize in handcrafted home décor and gifting products, including our *singing bowl collection*.
-</p>
-
-<p>
-Our singing bowls are designed to bring a sense of harmony, relaxation, and tranquility to any space, making them a unique addition to wellness stores, gift shops, and home décor collections.
-</p>
-
-<p>
-We would love to explore the possibility of working with your business and would be happy to share our singing bowl collection for your review.
+I thought our singing bowls could be a great fit for your collection. If interested, I'd be happy to share our catalog and wholesale pricing.
 </p>
 
 <p>
@@ -557,13 +549,11 @@ function buildPitchText() {
   return [
     "Hello,",
     "",
-    "I hope you're doing well.",
+    "I'm reaching out from OM Enterprise, a supplier of handcrafted singing bowls and home décor products.",
     "",
-    "I’m reaching out on behalf of OM Enterprise, where we specialize in handcrafted home décor and gifting products, including our *singing bowl collection*.",
+    "I thought our singing bowls could be a great fit for your collection, especially for customers interested in wellness, gifting, and unique home accents.",
     "",
-    "Our singing bowls are designed to bring a sense of harmony, relaxation, and tranquility to any space, making them a unique addition to wellness stores, gift shops, and home décor collections.",
-    "",
-    "We would love to explore the possibility of working with your business and would be happy to share our singing bowl collection for your review.",
+    "If you're interested, I'd be happy to share our catalog and wholesale pricing for your review.",
     "",
     "Would you be interested in exploring potential wholesale opportunities with us?",
     "",
