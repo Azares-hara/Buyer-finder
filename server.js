@@ -509,25 +509,15 @@ function buildPitchEmail({
   return `
 <p>Hello,</p>
 
-<p>
-I'm with OM Enterprise, a supplier of handcrafted singing bowls and home décor products.
-</p>
+<p>Greetings from OM Enterprise!</p>
 
-<p>
-I thought our singing bowls could be a great fit for your collection. If interested, I'd be happy to share our catalog and wholesale pricing.
-</p>
+<p>We offer handcrafted home décor, lanterns, candle holders, and decorative jars. 🎃 Explore our *Halloween Special Offer* and wholesale opportunities!</p>
 
-<p>
-Would you be interested in exploring potential wholesale opportunities with us?
-</p>
+<p>Interested? We'd love to connect.</p>
 
-<p>
-Looking forward to hearing from you.
-</p>
-<p>
-Best regards,<br>
-Agatha Swett<br>
-OM Enterprise<br>
+<p>Best regards,</p>
+<p>Name: Agatha Swett </p>
+<p>OM Enterprise</p>
 📧 Sales Contact: exportindia2026us@gmail.com<br>
 </p>
 
@@ -549,19 +539,18 @@ function buildPitchText() {
   return [
     "Hello,",
     "",
-    "I'm reaching out from OM Enterprise, a supplier of handcrafted singing bowls and home décor products.",
+    "Greetings from OM Enterprise!",
     "",
-    "I thought our singing bowls could be a great fit for your collection, especially for customers interested in wellness, gifting, and unique home accents.",
+    "We offer handcrafted home décor, lanterns, candle holders, and decorative jars. 🎃 Explore our *Halloween Special Offer* and wholesale opportunities!",
     "",
-    "If you're interested, I'd be happy to share our catalog and wholesale pricing for your review.",
-    "",
-    "Would you be interested in exploring potential wholesale opportunities with us?",
-    "",
-    "Looking forward to hearing from you",
+    "Interested? We'd love to connect.",
     "",
     "Best regards,",
-    "Agatha Swett",
+    "",
+    "Name: Agatha Swett", 
+    "",
     "OM Enterprise",
+    "",
     "Sales Contact: exportindia2026us@gmail.com",
     "",
     "Product Catalog : https://catalog.outthereexports.xyz/homeint/poster1.jpeg",
