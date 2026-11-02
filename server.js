@@ -31,6 +31,8 @@ function loadPitches() {
 }
 
 
+
+
 function savePitch(pitch) {
   const pitches = loadPitches();
   pitches.unshift(pitch);
@@ -59,6 +61,8 @@ app.post("/unsubscribe", express.urlencoded({ extended: false }), (req, res) => 
   res.status(200).send("Unsubscribed");
 });
 
+
+
 //Browser fallback
 app.get("/unsubscribe", (req, res) => {
   const email = (req.query.email || "")
@@ -75,7 +79,7 @@ app.get("/unsubscribe", (req, res) => {
 let events = [];
 let replies = [];
 const DAILY_SEND_LIMIT = Number(process.env.DAILY_SEND_LIMIT || 75);
-const PITCH_SUBJECT = "Handcrafted Singing Bowls \u2013 Wholesale Opportunity";
+const PITCH_SUBJECT = "Handcrafted Home Decor \u2013 Wholesale Opportunity";
 
 function sentToday() {
   const today = new Date().toISOString().slice(0, 10);
@@ -87,6 +91,16 @@ function dailyLimitRemaining() {
 }
 
 app.use(express.json());
+
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
 
 //innbound email webhook
 app.post("/api/inbound-email", express.raw({ type: "application/json" }), async (req, res) => {
@@ -136,18 +150,12 @@ app.post("/api/inbound-email", express.raw({ type: "application/json" }), async 
     }
 
     try {
-      await resend.emails.send({
-        from: "Out There Exports <export@mail.outthereexports.xyz>",
-        to: ["agaciazara765@gmail.com"],
-        reply_to: event.data.from,
+      await transporter.sendMail({
+        from: process.env.GMAIL_USER,
+        to: process.env.GMAIL_USER,
         subject: `Fwd: ${event.data.subject}`,
-        html: email.html,
-        text: email.text,
-        attachments,
-        headers: {
-          "In-Reply-To": event.data.message_id,
-          "References": event.data.message_id,
-        },
+        text: `From: ${event.data.from}\nTo: ${event.data.to}\n\n${email.text || "(no text body)"}`,
+        html: email.html || undefined,
       });
     } catch (err) {
       console.error("Forwarding failed:", err);
@@ -497,39 +505,19 @@ app.get("/api/find-buyers", async (req, res) => {
   }
 });
 
-function buildPitchEmail({
-  buyerName,
-  sellerName,
-  item,
-  country,
-  company,
-  website,
-  category
-}) {
+function buildPitchEmail() {
   return `
 <p>Hello,</p>
 
 <p>Greetings from OM Enterprise!</p>
 
-<p>We offer handcrafted home décor, lanterns, candle holders, and decorative jars. 🎃 Explore our *Halloween Special Offer* and wholesale opportunities!</p>
+<p>We offer handcrafted home décor, lanterns, candle holders, and decorative jars. Explore our special offers and wholesale opportunities!</p>
 
 <p>Interested? We'd love to connect.</p>
 
 <p>Best regards,</p>
 <p>Name: Agatha Swett </p>
 <p>OM Enterprise</p>
-📧 Sales Contact: exportindia2026us@gmail.com<br>
-</p>
-
-<p>
-<a href="https://catalog.outthereexports.xyz/homeint/poster1.jpeg">
-View products (JPEG)
-</a>
-<p>
-<a href="https://catalog.outthereexports.xyz/homeint/poster2.jpeg">
-View Offer Poster (JPEG)
-</a>
-</p>
 `;
 }
 
@@ -541,7 +529,7 @@ function buildPitchText() {
     "",
     "Greetings from OM Enterprise!",
     "",
-    "We offer handcrafted home décor, lanterns, candle holders, and decorative jars. 🎃 Explore our *Halloween Special Offer* and wholesale opportunities!",
+    "We offer handcrafted home décor, lanterns, candle holders, and decorative jars. Explore our special offers and wholesale opportunities!",
     "",
     "Interested? We'd love to connect.",
     "",
@@ -550,11 +538,7 @@ function buildPitchText() {
     "Name: Agatha Swett", 
     "",
     "OM Enterprise",
-    "",
-    "Sales Contact: exportindia2026us@gmail.com",
-    "",
-    "Product Catalog : https://catalog.outthereexports.xyz/homeint/poster1.jpeg",
-    "Offer Poster : https://catalog.outthereexports.xyz/homeint/poster2.jpeg",
+    
   ].join("\n");
 }
 
@@ -578,20 +562,16 @@ app.post("/api/send-email", express.json(), async (req, res) => {
   }
 
   try {
-    await resend.emails.send({
-      from: process.env.SENDER_EMAIL,
+    await transporter.sendMail({
+      from: `"OM Enterprise" <${process.env.GMAIL_USER}>`,
       to,
-      reply_to: "agaciazara765@gmail.com",
       subject: PITCH_SUBJECT,
       html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category }),
       text: buildPitchText(),
-      headers: {
-        "List-Unsubscribe":
-        `<https://outthereexports.xyz/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:unsubscribe@outthereexports.xyz>`,
-        "List-Unsubscribe-Post":
-        "List-Unsubscribe=One-Click"
-      }
-
+      headers: { //https://buyer-finder-pyoa.onrender.com
+      "List-Unsubscribe": `<https://buyer-finder-pyoa.onrender.com/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:${process.env.GMAIL_USER}?subject=unsubscribe>`,
+      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     });
     savePitch({
   sentAt: new Date().toISOString(),
@@ -677,19 +657,16 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
     }
 
     try {
-      await resend.emails.send({
-        from: process.env.SENDER_EMAIL,
+      await transporter.sendMail({
+        from: `"OM Enterprise" <${process.env.GMAIL_USER}>`,
         to,
-        reply_to: "agaciazara765@gmail.com",
         subject: PITCH_SUBJECT,
         html: buildPitchEmail(p),
         text: buildPitchText(),
         headers: {
-          "List-Unsubscribe":
-          `<https://outthereexports.xyz/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:unsubscribe@outthereexports.xyz>`,
-          "List-Unsubscribe-Post":
-          "List-Unsubscribe=One-Click"
-        }
+        "List-Unsubscribe": `<https://buyer-finder-pyoa.onrender.com/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:${process.env.GMAIL_USER}?subject=unsubscribe>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       });
       savePitch({
         sentAt: new Date().toISOString(),
@@ -713,7 +690,7 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
       results.push({ status: "failed", error: "Email failed to send" });
     }
 
-    await sleep(600);
+    await sleep(2000);
   }
 
   res.json({
