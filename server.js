@@ -505,7 +505,7 @@ app.get("/api/find-buyers", async (req, res) => {
   }
 });
 
-function buildPitchEmail() {
+function buildPitchEmail(unsubUrl) {
   return `
 <p>Hello,</p>
 
@@ -518,12 +518,16 @@ function buildPitchEmail() {
 <p>Best regards,</p>
 <p>Name: Agatha Swett </p>
 <p>OM Enterprise</p>
+
+<hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+<p style="font-size:12px;color:#888;">
+  You received this email because your store matches our wholesale buyer profile.<br>
+  <a href="${unsubUrl}" style="color:#888;">Unsubscribe</a> · OM Enterprise
+</p>
 `;
 }
 
-
-
-function buildPitchText() {
+function buildPitchText(unsubUrl) {
   return [
     "Hello,",
     "",
@@ -535,10 +539,12 @@ function buildPitchText() {
     "",
     "Best regards,",
     "",
-    "Name: Agatha Swett", 
+    "Name: Agatha Swett",
     "",
     "OM Enterprise",
-    
+    "",
+    "----",
+    `Unsubscribe: ${unsubUrl}`,
   ].join("\n");
 }
 
@@ -561,30 +567,28 @@ app.post("/api/send-email", express.json(), async (req, res) => {
     });
   }
 
+  const unsubUrl = `https://buyer-finder-pyoa.onrender.com/unsubscribe?email=${encodeURIComponent(to)}`;
   try {
     await transporter.sendMail({
       from: `"OM Enterprise" <${process.env.GMAIL_USER}>`,
       to,
       subject: PITCH_SUBJECT,
-      html: buildPitchEmail({ buyerName, sellerName, item, country, company, website, category }),
-      text: buildPitchText(),
-      headers: { //https://buyer-finder-pyoa.onrender.com
-      "List-Unsubscribe": `<https://buyer-finder-pyoa.onrender.com/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:${process.env.GMAIL_USER}?subject=unsubscribe>`,
-      "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-      },
+      html: buildPitchEmail(unsubUrl),
+      text: buildPitchText(unsubUrl),
+      headers: {"List-Unsubscribe": `<${unsubUrl}>`},
     });
     savePitch({
-  sentAt: new Date().toISOString(),
-  buyerName,
-  company,
-  email: to,
-  item,
-  country,
-  website,
-  category,
-  sellerName,
-  subject: PITCH_SUBJECT,
-});
+      sentAt: new Date().toISOString(),
+      buyerName,
+      company,
+      email: to,
+      item,
+      country,
+      website,
+      category,
+      sellerName,
+      subject: PITCH_SUBJECT,
+    });
    
     res.json({ success: true });
   } catch (err) {
@@ -655,18 +659,15 @@ app.post("/api/send-email-bulk", express.json(), async (req, res) => {
       results.push({ status: "skipped", error: "Daily warmup limit reached" });
       continue;
     }
-
+    const unsubUrl =`https://buyer-finder-pyoa.onrender.com/unsubscribe?email=${encodeURIComponent(to)}`;
     try {
       await transporter.sendMail({
         from: `"OM Enterprise" <${process.env.GMAIL_USER}>`,
         to,
         subject: PITCH_SUBJECT,
-        html: buildPitchEmail(p),
-        text: buildPitchText(),
-        headers: {
-        "List-Unsubscribe": `<https://buyer-finder-pyoa.onrender.com/unsubscribe?email=${encodeURIComponent(to)}>, <mailto:${process.env.GMAIL_USER}?subject=unsubscribe>`,
-        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
-        },
+        html: buildPitchEmail(unsubUrl),
+        text: buildPitchText(unsubUrl),
+        headers: {"List-Unsubscribe": `<${unsubUrl}>`},
       });
       savePitch({
         sentAt: new Date().toISOString(),
