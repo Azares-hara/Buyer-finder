@@ -113,6 +113,8 @@ transporter.verify((error, success) => {
     console.log("SMTP Ready");
   }
 });
+console.log("GMAIL_USER:", process.env.GMAIL_USER);
+console.log("HAS_PASSWORD:", !!process.env.GMAIL_APP_PASSWORD);
 
 //innbound email webhook
 app.post("/api/inbound-email", express.raw({ type: "application/json" }), async (req, res) => {
